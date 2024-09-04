@@ -1,0 +1,49 @@
+:root {
+  /* es de Fondo */
+  --bg-primary: #1C1C1C; /* Negro Profundo - Fondo principal de la aplicación */
+  --bg-secondary: #2E2E2E; /* Gris Oscuro - Secciones secundarias, sidebar, modales */
+  
+  /* es de Texto */
+  --text-primary: #D3D3D3; /* Gris Claro - Texto principal, descripciones, links */
+  
+  /* es de Acento */
+  --primary: #6A0DAD; /* Violeta Real - Botones, enlaces activos, íconos */
+  --secondary: #007BFF; /* Azul Eléctrico - Alternativa a violeta, botones de acción, hover */
+  
+  /* es de Inputs y Botones */
+  --input-bg: #4F4F4F; /* Gris Medio - Fondos de inputs, botones no activos */
+  
+  /* es de Error y Advertencia */
+  --error: #FF4C4C; /* Rojo Suave - Mensajes de error, advertencias */
+}
+
+* {
+  font-family: 'Raleway', sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.min-vh {
+  min-height: 88vh;
+}
+
+/* Estilos de fondos */
+.bg-purple {
+  background-color: rgba(99, 3, 99, 0.863);
+}
+
+.bg-primary-gradient {
+  background: linear-gradient(135deg, var(--bg-primary), var(--primary));
+  color: var(--text-primary);
+}
