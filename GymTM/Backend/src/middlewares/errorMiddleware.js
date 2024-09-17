@@ -1,14 +1,8 @@
-const errorMiddleware = (error, req, res, next) => {
-  error.statusCode = error.statusCode || 500;
-  error.status = error.status || 'error';
-
-  const message = `Error ${error.status}: ${error.message}`;
-
-  console.error(message);
-
-  res.status(error.statusCode).send({
-    status: error.status,
-    message: !error.showMessageToClient ? 'Internal Server Error' : error.message,
+const errorMiddleware = (err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Ocurrió un error en el servidor',
   });
 };
 

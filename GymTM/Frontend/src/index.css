@@ -47,3 +47,11 @@ code {
   background: linear-gradient(135deg, var(--bg-primary), var(--primary));
   color: var(--text-primary);
 }
+
+.logo-image {
+  height: 4rem;
+}
+
+.bold {
+  font-weight: bold !important;
+}

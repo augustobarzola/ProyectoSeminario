@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import HomeScreen from '../../../screens/client/homeScreen/HomeScreen';
 import { Route, Routes } from 'react-router-dom';
 import './Main.css';
+import NotFoundScreen from '../../../screens/notFoundScreen/NotFoundScreen';
 
 const Main = () => {
   const location = useLocation();
@@ -16,6 +17,7 @@ const Main = () => {
     <main className="min-vh bg-primary-gradient text-white">
       <Routes>
         <Route path="/" element={<HomeScreen />} />
+        <Route path="*" element={<NotFoundScreen />} />
       </Routes>
     </main>
   );
