@@ -7,7 +7,7 @@ const NotFoundScreen = () => {
   return (
     <div className="container pt-5 d-flex flex-column align-items-center justify-content-center text-center">
       <div>
-        <h2>Error - 404</h2>
+        <h2>Oops</h2>
         <p>La página que estás buscando no existe.</p>
 
         <Button
