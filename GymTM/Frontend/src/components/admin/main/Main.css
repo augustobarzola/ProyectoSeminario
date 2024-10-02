@@ -1,0 +1,8 @@
+.main-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.content {
+  padding: 20px;
+}

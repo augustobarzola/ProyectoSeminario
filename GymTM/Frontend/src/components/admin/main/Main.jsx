@@ -1,26 +1,40 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import HomeScreen from '../../../screens/admin/homeScreen/HomeScreen';
 import { Route, Routes } from 'react-router-dom';
-import './Main.css';
+import Sidebar from '../sidebar/Sidebar';
+import { routes } from '../../../constants/adminLinks'; 
 import NotFoundScreen from '../../../screens/notFoundScreen/NotFoundScreen';
+import './Main.css';
 
 const Main = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Se ejecuta cada vez que cambia la ruta
     window.scrollTo(0, 0); // Vuelve al principio de la página
+    console.log(routes)
   }, [location]);
 
   return (
-    <main className="min-vh bg-primary-gradient text-white">
-      <Routes>
-        <Route path="/" element={<HomeScreen />} />
-        <Route path="*" element={<NotFoundScreen />} />
-      </Routes>
-    </main>
+    <div className="main-container d-flex">
+      {/* Sidebar lateral */}
+      <Sidebar />
+
+      {/* Contenido principal */}
+      <main className="content flex-grow-1 bg-primary-gradient text-white">
+        <Routes>
+          {routes.map((route, index) => (
+            <Route
+              key={index}
+              path={route.path}
+              element={route.element}
+            />
+          ))}
+          {/* Ruta de fallback para páginas no encontradas */}
+          <Route path="*" element={<NotFoundScreen />} />
+        </Routes>
+      </main>
+    </div>
   );
-}
+};
 
 export default Main;

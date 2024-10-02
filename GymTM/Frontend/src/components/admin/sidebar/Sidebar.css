@@ -1,0 +1,60 @@
+/* Sidebar.css */
+
+.sidebar {
+  width: 250px;
+  height: 100vh;; /* Ocupa el 100% de la altura del contenedor main */
+  background-color: #343a40;
+  padding: 20px;
+  overflow-y: auto; /* Para permitir scroll si hay demasiadas opciones */
+  position: relative; /* Asegura que no se superponga con el header/footer */
+  transition: width 0.3s ease; /* Transición suave al cambiar el ancho */
+}
+
+.sidebar.collapsed {
+  width: 80px;
+  transition: width 0.3s ease; /* Transición suave al colapsar */
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  font-size: 1.5rem;
+  color: white;
+}
+
+.sidebar-icon {
+  font-size: 1.5rem;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.mobile-menu-btn {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background-color: #343a40;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.mobile-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: #343a40;
+  padding: 20px;
+  color: white;
+}
