@@ -1,0 +1,41 @@
+/* Estilos para la paginación */
+.divPaginadorRegistros {
+  font-weight: bold;
+  background-color: var(--obscure);
+  padding: 10px;
+  border-radius: 0.25rem;
+}
+  
+.custom-pagination .page-item .page-link {
+  border-color: var(--darker-gray);
+  color: var(--white);
+}
+
+.custom-pagination .page-link {
+  background-color: var(--obscure);
+  border-color: var(--darker-gray);
+}
+
+.custom-pagination .page-item.active .page-link {
+  background-color: var(--darker-gray);
+}
+
+.custom-pagination .page-link:hover {
+  background-color: var(--dark-gray);
+  cursor: pointer;
+}
+
+.custom-pagination .page-item.disabled .page-link {
+  background-color: var(--obscure);
+  color: var(--light-gray);
+}
+
+.custom-pagination .page-item.active-disabled .page-link {
+  background-color: var(--darker-gray);
+  color: var(--white);
+  pointer-events: none;
+}
+
+.pageSizeSelect {
+  width: 4rem !important;
+}

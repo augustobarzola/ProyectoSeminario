@@ -1,6 +1,6 @@
 // src/screens/loginScreen/LoginScreen.js
 import React, { useState } from 'react';
-import { Button, Form, Alert } from 'react-bootstrap';
+import { Button, Form, Alert, Container } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo_icon.png';
@@ -25,7 +25,7 @@ const Login = () => {
   };
 
   return (
-    <div className="container-fluid d-flex align-items-center bg-dark text-light" style={{ height: '100vh' }}>
+    <div className="d-flex align-items-center bg-dark text-light" style={{ height: '100vh' }}>
       <div className="container">  
         <div className="d-flex justify-content-center align-items-center mb-4">
           <img src={logo} alt="GymTM Logo" className="logo-image-login"/>

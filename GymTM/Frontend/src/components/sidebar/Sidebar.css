@@ -1,17 +1,17 @@
-/* Sidebar.css */
-
 .sidebar {
-  width: 250px;
-  height: 100vh;; /* Ocupa el 100% de la altura del contenedor main */
+  width: 100%; /* Ancho completo en dispositivos móviles */
+  max-width: 250px; /* Establece un ancho máximo para pantallas más grandes */
+  min-width: 70px;
+  height: 100%; /* Ocupa el 100% de la altura del contenedor main */
   background-color: #343a40;
-  padding: 20px;
+  padding: 0.3rem; /* Usa rem para que sea más responsivo */
   overflow-y: auto; /* Para permitir scroll si hay demasiadas opciones */
   position: relative; /* Asegura que no se superponga con el header/footer */
   transition: width 0.3s ease; /* Transición suave al cambiar el ancho */
 }
 
 .sidebar.collapsed {
-  width: 80px;
+  width: 70px; /* Un ancho fijo para la versión colapsada */
   transition: width 0.3s ease; /* Transición suave al colapsar */
 }
 

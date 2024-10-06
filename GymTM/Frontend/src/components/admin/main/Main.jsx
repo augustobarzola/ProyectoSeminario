@@ -1,28 +1,32 @@
 import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Route, Routes } from 'react-router-dom';
-import Sidebar from '../sidebar/Sidebar';
-import { routes } from '../../../constants/adminLinks'; 
+import { useLocation, Route, Routes } from 'react-router-dom';
+import Sidebar from '../../sidebar/Sidebar';
 import NotFoundScreen from '../../../screens/notFoundScreen/NotFoundScreen';
+import { getUserData } from '../../../services/authService';
 import './Main.css';
+import { getAccessibleRoutes } from '../../../routes/accesibleRoutes';
 
 const Main = () => {
   const location = useLocation();
+  const user = getUserData();
 
   useEffect(() => {
     window.scrollTo(0, 0); // Vuelve al principio de la página
-    console.log(routes)
   }, [location]);
 
+  // Función para filtrar las rutas según el rol del usuario
+
+  const accessibleRoutes = user ? getAccessibleRoutes(user.id_rol) : [];
+
   return (
-    <div className="main-container d-flex">
+    <div className="main-container">
       {/* Sidebar lateral */}
       <Sidebar />
 
       {/* Contenido principal */}
-      <main className="content flex-grow-1 bg-primary-gradient text-white">
+      <main className="content bg-primary-gradient text-white">
         <Routes>
-          {routes.map((route, index) => (
+          {accessibleRoutes.map((route, index) => (
             <Route
               key={index}
               path={route.path}

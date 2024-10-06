@@ -15,8 +15,8 @@ export const AuthProvider = ({ children }) => {
       if (isAuthenticated()) {
         const user = await getUserData();
         if (user) {
-          setIsAdminLoggedIn(user.rol === 1);
-          setIsClientLoggedIn(user.rol === 2);
+          setIsAdminLoggedIn(user.id_rol !== 4);
+          setIsClientLoggedIn(user.id_rol === 4);
         } else {
           setIsAdminLoggedIn(false);
           setIsClientLoggedIn(false);
@@ -36,8 +36,8 @@ export const AuthProvider = ({ children }) => {
     if (result.success) {
       const user = await getUserData();
       if (user) {
-        setIsAdminLoggedIn(user.rol === 1);
-        setIsClientLoggedIn(user.rol === 2);
+        setIsAdminLoggedIn(user.id_rol !== 4);
+        setIsClientLoggedIn(user.id_rol === 4);
       }
       return { success: true };
     }

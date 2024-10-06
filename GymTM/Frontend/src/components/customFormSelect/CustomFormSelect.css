@@ -1,0 +1,20 @@
+.custom-select {
+  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path d="M1 3.5l5 5 5-5H1z" fill="gray"/></svg>') !important; /* Down arrow */
+  background-size: 14px 14px !important;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  background-position: right 12px center;
+  padding-right: 20px; /* Add padding for the triangle */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 40px;
+  font-size: 16px;
+  padding: 0 10px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.custom-select.open {
+  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path d="M11 8.5L6 3.5 1 8.5H11z" fill="gray" /></svg>') !important; /* Up arrow */
+}

@@ -1,26 +1,44 @@
 import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import HomeScreen from '../../../screens/client/homeScreen/HomeScreen';
-import { Route, Routes } from 'react-router-dom';
-import './Main.css';
+import { useLocation, Route, Routes } from 'react-router-dom';
+import Sidebar from '../../sidebar/Sidebar';
 import NotFoundScreen from '../../../screens/notFoundScreen/NotFoundScreen';
+import { getUserData } from '../../../services/authService';
+import './Main.css';
+import { getAccessibleRoutes } from '../../../routes/accesibleRoutes';
 
 const Main = () => {
   const location = useLocation();
+  const user = getUserData();
 
   useEffect(() => {
-    // Se ejecuta cada vez que cambia la ruta
     window.scrollTo(0, 0); // Vuelve al principio de la página
   }, [location]);
 
+  // Función para filtrar las rutas según el rol del usuario
+
+  const accessibleRoutes = user ? getAccessibleRoutes(user.id_rol) : [];
+
   return (
-    <main className="min-vh bg-primary-gradient text-white">
-      <Routes>
-        <Route path="/" element={<HomeScreen />} />
-        <Route path="*" element={<NotFoundScreen />} />
-      </Routes>
-    </main>
+    <div className="main-container">
+      {/* Sidebar lateral */}
+      <Sidebar />
+
+      {/* Contenido principal */}
+      <main className="content bg-primary-gradient text-white">
+        <Routes>
+          {accessibleRoutes.map((route, index) => (
+            <Route
+              key={index}
+              path={route.path}
+              element={route.element}
+            />
+          ))}
+          {/* Ruta de fallback para páginas no encontradas */}
+          <Route path="*" element={<NotFoundScreen />} />
+        </Routes>
+      </main>
+    </div>
   );
-}
+};
 
 export default Main;

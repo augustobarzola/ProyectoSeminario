@@ -1,24 +1,22 @@
 import axios from 'axios';
 
-const apiUrl = "http://localhost:8300";
+const apiUrl = process.env.REACT_APP_URL_API;
 
 // Método para iniciar sesión
 export const login = async (dni, password) => {
   try {
     const url = `${apiUrl}/api/auth/login`;
 
-    const response = await axios.post(url, { dni, password });
+    const response = await axios.post(url, { dni, password }, { withCredentials: true });
 
     if (response.status === 200) {
       const data = response.data;
-      if (data && data.token) {
-        // Guardar el token y los datos del usuario en el localStorage
-        localStorage.setItem('token', data.token); // Guardar el token JWT
+      if (data && data.userData) {
+        // Guardar los datos del usuario en el localStorage (ya no guardas el token)
         localStorage.setItem('userData', JSON.stringify(data.userData)); // Guardar los datos del usuario
-
         return { success: true };
       } else {
-        return { success: false, message: 'Token no recibido.' };
+        return { success: false, message: 'Error en la autenticación.' };
       }
     } else {
       return { success: false, message: 'Error al iniciar sesión. La respuesta no fue exitosa.' };
@@ -30,19 +28,20 @@ export const login = async (dni, password) => {
 };
 
 // Método para cerrar sesión
-export const logout = () => {
-  localStorage.removeItem('token'); // Elimina el token del almacenamiento
-  localStorage.removeItem('userData'); // Elimina los datos del usuario del almacenamiento
+export const logout = async () => {
+  try {
+    // Realizar una solicitud al backend para destruir la sesión/cookie
+    await axios.post(`${apiUrl}/api/auth/logout`, {}, { withCredentials: true });
+
+    localStorage.removeItem('userData'); // Elimina los datos del usuario del almacenamiento
+  } catch (error) {
+    console.error('Error al cerrar sesión:', error.message);
+  }
 };
 
 // Método para verificar si el usuario está autenticado
 export const isAuthenticated = () => {
-  return !!localStorage.getItem('token'); // Retorna true si hay un token
-};
-
-// Método para obtener el token almacenado
-export const getToken = () => {
-  return localStorage.getItem('token');
+  return !!localStorage.getItem('userData'); // Verifica si hay datos del usuario almacenados
 };
 
 // Método para obtener los datos del usuario logueado desde el localStorage
@@ -51,25 +50,11 @@ export const getUserData = () => {
   return userData ? JSON.parse(userData) : null; // Retorna los datos del usuario o null si no existen
 };
 
-// Configura un interceptor de Axios para añadir el token a las peticiones
-axios.interceptors.request.use(
-  (config) => {
-    const token = getToken();
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Método para obtener el perfil del usuario logueado desde el backend (opcional)
+// Método para obtener el perfil del usuario logueado desde el backend
 export const getLoggedUser = async () => {
   try {
-    const url = `${apiUrl}/api/auth/user`; // Ruta para obtener el perfil del usuario
-    const response = await axios.get(url);
+    const url = `${apiUrl}/api/auth/user`;
+    const response = await axios.get(url, { withCredentials: true });
 
     if (response.status === 200) {
       return response.data; // Retorna los datos del usuario desde el backend

@@ -1,11 +1,10 @@
 import axios from 'axios';
 
-const apiUrl = "http://localhost:8300";
+const apiUrl = process.env.REACT_APP_URL_API;
 
 export const getData = async (urlName, params) => {
   try {
     let url = `${apiUrl}/api/${urlName}`;
-
     const response = await axios.get(url, { params });
 
     if (response.status !== 200) {

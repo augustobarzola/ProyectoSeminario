@@ -5,8 +5,8 @@ import { Container } from 'react-bootstrap';
 const RoutinesScreen = () => {
 
   return (
-    <Container className="py-4">
-      Rutinas
+    <Container fluid className="py-4">
+      <h3 className="text-center">RUTINAS</h3>
     </Container>
   );
 }

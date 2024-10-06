@@ -15,6 +15,10 @@
   
   /* es de Error y Advertencia */
   --error: #FF4C4C; /* Rojo Suave - Mensajes de error, advertencias */
+
+  --obscure: #373739;
+
+  --darker-gray: rgb(44, 44, 44);
 }
 
 * {
@@ -34,6 +38,26 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
+/* Estilos para el scrollbar en modo oscuro */
+textarea {
+  scrollbar-color: rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.1);
+  scrollbar-width: thin;
+}
+
+/* Estilos para el scrollbar vertical */
+body::-webkit-scrollbar {
+  width: 10px; /* Ancho del scrollbar */
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: rgb(85, 85, 85); /* Color del scrollbar */
+  border-radius: 5px; /* Radio del borde del botón de agarre */
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(85, 85, 85, 0.8); /* Color del scrollbar al pasar el mouse */
+}
+
 .min-vh {
   min-height: 88vh;
 }
@@ -43,15 +67,46 @@ code {
   background-color: rgba(99, 3, 99, 0.863);
 }
 
+.bg-obscure {
+  background-color: var(--obscure) !important;
+}
+
+input::placeholder {
+  color: white !important;
+  opacity: 1 !important;
+}
+
 .bg-primary-gradient {
   background: linear-gradient(135deg, var(--bg-primary), var(--primary));
   color: var(--text-primary);
 }
 
+.custom-border {
+  border: 1px solid var(--darker-gray) !important;
+}
+
+.custom-border-left {
+  border: 1px solid var(--darker-gray) !important;
+  border-left: none !important;
+}
+
+.custom-border-right {
+  border: 1px solid var(--darker-gray) !important;
+  border-right: none !important;
+}
+
 .logo-image {
-  height: 4rem;
+  height: 3.5rem;
 }
 
 .bold {
   font-weight: bold !important;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.w-35 {
+  width: 35% !important;
 }

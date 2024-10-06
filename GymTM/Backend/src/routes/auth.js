@@ -9,4 +9,7 @@ router.post('/login', authController.login);
 // Ruta para obtener los datos del usuario logueado
 router.get('/user', authMiddleware, authController.getUserData);
 
+// Ruta para cerrar sesión
+router.post('/logout', authController.logout);
+
 module.exports = router;

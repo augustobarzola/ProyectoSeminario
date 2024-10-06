@@ -1,8 +1,11 @@
 .main-container {
-  display: flex;
-  min-height: 100vh;
+  display: flex; /* Utiliza flexbox para organizar el layout */
+  height: 87vh; /* Ocupa el 100% de la altura de la ventana */
 }
 
 .content {
-  padding: 20px;
+  flex-grow: 1; /* El contenido ocupa el resto del espacio disponible */
+  padding: 20px; /* Espaciado interno del contenido */
+  overflow-y: auto; /* Permite scroll si el contenido es demasiado */
+  background-color: #f8f9fa; /* Cambia este color según tu preferencia */
 }
