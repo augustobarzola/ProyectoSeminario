@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
 import './HomeScreen.css';
+import { Link } from 'react-router-dom';
 
 const HomeScreen = () => {
   return (
@@ -12,7 +13,7 @@ const HomeScreen = () => {
           <p className="lead">
             "Cada día es una nueva oportunidad para ser más fuerte, más rápido y mejor que ayer. ¡No te detengas!"
           </p>
-          <Button variant="warning" size="lg" href="/planes" className="mt-3">
+          <Button variant="warning" size="lg" as={Link} to="/rutinas" className="mt-3">
             Ver rutinas de entrenamiento
           </Button>
         </Col>
@@ -27,7 +28,7 @@ const HomeScreen = () => {
               <Card.Text>
                 Planes adaptados a tus metas con seguimiento de entrenadores calificados.
               </Card.Text>
-              <Button variant="outline-light" href="/entrenadores">Conoce más</Button>
+              <Button variant="outline-light" as={Link} to="/entrenadores">Conoce más</Button>
             </Card.Body>
           </Card>
         </Col>
@@ -38,7 +39,7 @@ const HomeScreen = () => {
               <Card.Text>
                 Disfruta de entrenamientos divertidos y en equipo. ¡Motívate con nosotros!
               </Card.Text>
-              <Button variant="outline-light" href="/clases">Explora las clases</Button>
+              <Button variant="outline-light" as={Link} to="/clases">Explora las clases</Button>
             </Card.Body>
           </Card>
         </Col>
@@ -49,7 +50,7 @@ const HomeScreen = () => {
               <Card.Text>
                 Equipamiento de última generación y áreas acondicionadas para tu comodidad.
               </Card.Text>
-              <Button variant="outline-light" href="/instalaciones">Descubre nuestras instalaciones</Button>
+              <Button variant="outline-light" as={Link} to="/instalaciones">Descubre nuestras instalaciones</Button>
             </Card.Body>
           </Card>
         </Col>
