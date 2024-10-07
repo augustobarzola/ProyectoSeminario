@@ -85,8 +85,18 @@ module.exports = {
 
       const id_cliente = client[0].id;
 
+      // Verificar si el cliente ya tiene una asistencia registrada hoy
+      const [existingAssist] = await db.query(
+        `SELECT * FROM asistencias WHERE id_cliente = ? AND DATE(fecha_ingreso) = CURDATE()`,
+        [id_cliente]
+      );
+
+      if (existingAssist.length > 0) {
+        return res.status(400).json({ error: 'El cliente ya tiene una asistencia registrada hoy.' });
+      }
+
       // Obtener el id del recepcionista logueado (suponiendo que el recepcionista está logueado)
-      const id_recepcionista = req.userId; 
+      const id_recepcionista = req.userId;
 
       // Registrar la asistencia
       const [result] = await db.query(

@@ -39,7 +39,7 @@ const AsistenciasScreen = () => {
       fetchAsistencias(); // Refrescar la lista de asistencias
       reset(initialFormState);
     } catch (error) {
-      let mensaje = error.response?.data?.error.includes('Cliente') ? error.response?.data?.error : '';
+      let mensaje = error.response?.data?.error?.toLowerCase().includes('cliente') ? error.response?.data?.error : '';
       toast.error('Error al registrar la asistencia. '+mensaje);
     }
   };
