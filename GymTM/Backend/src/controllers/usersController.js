@@ -190,13 +190,14 @@ module.exports = {
   },
 
   updatePassword: async (req, res) => {
-    const { iid, newPassword } = req.body;
-
+    const userId = req.params.id;
+    const { nueva_contrasenia } = req.body;
+    
     try {
       // Hashear la nueva contraseña
-      const hashedPassword = await bcrypt.hash(newPassword.toString(), 10);
+      const hashedPassword = await bcrypt.hash(nueva_contrasenia.toString(), 10);
 
-      await db.query('UPDATE usuarios SET contrasenia = ? WHERE id = ?', [hashedPassword, iid]);
+      await db.query('UPDATE usuarios SET contrasenia = ? WHERE id = ?', [hashedPassword, userId]);
 
       return res.json({ success: true, message: 'Contraseña actualizada exitosamente' });
     } catch (error) {

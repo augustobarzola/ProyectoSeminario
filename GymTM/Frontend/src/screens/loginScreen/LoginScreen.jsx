@@ -1,17 +1,19 @@
-// src/screens/loginScreen/LoginScreen.js
 import React, { useState } from 'react';
-import { Button, Form, Alert, Container } from 'react-bootstrap';
+import { Button, Form, Alert, Container, Row, Col } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo_icon.png';
 import './LoginScreen.css';
 import { useAuth } from '../../context/AuthContext';
+import gymBackground from '../../assets/gymBackground.jpg';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [loginError, setLoginError] = useState(null);
   const navigate = useNavigate(); 
   const { handleLogin } = useAuth(); 
+  const isMobile = useIsMobile();
 
   const onSubmit = async (data) => {
     setLoginError(null); // Resetear mensaje de error
@@ -25,44 +27,51 @@ const Login = () => {
   };
 
   return (
-    <div className="d-flex align-items-center bg-dark text-light" style={{ height: '100vh' }}>
-      <div className="container">  
-        <div className="d-flex justify-content-center align-items-center mb-4">
-          <img src={logo} alt="GymTM Logo" className="logo-image-login"/>
-          <h1 className="text-center ms-3 bold">GymTM</h1>
-        </div>
+    <div className="d-flex align-items-center bg-login" style={{ height: '100vh', backgroundImage: `url(${gymBackground})` }}>
+      <Container className={`bg-dark text-light rounded p-5 shadow-lg ${isMobile && 'containerMobileLogin'}`}>
+        <Row className="justify-content-center mb-4">
+          <Col className="text-center">
+            <img src={logo} alt="GymTM Logo" className="logo-image-login mb-3" />
+            <h1 className="text-white bold">Bienvenido a GymTM</h1>
+            <p className="text-white-50">"La grandeza se construye con esfuerzo. ¡Hoy es tu día para empezar!"</p> {/* Mensaje motivacional */}
+          </Col>
+        </Row>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Form.Group controlId="dni">
+          <Form.Group controlId="dni" className="mb-3">
             <Form.Label>DNI</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Ingrese su dni"
-              className="bg-dark text-white border border-secondary"
+              placeholder="Ingrese su DNI"
+              className="bg-dark text-white border-secondary"
               {...register('dni', { required: true })}
             />
-            {errors.dni && <p className="text-danger">Por favor, ingrese su dni.</p>}
+            {errors.dni && <p className="text-danger">Por favor, ingrese su DNI.</p>}
           </Form.Group>
 
-          <Form.Group controlId="password" className="mt-4">
+          <Form.Group controlId="password" className="mb-4">
             <Form.Label>Contraseña</Form.Label>
             <Form.Control
               type="password"
               placeholder="Ingrese su contraseña"
-              className="bg-dark text-white border border-secondary"
+              className="bg-dark text-white border-secondary"
               {...register('password', { required: true })}  
             />
             {errors.password && <p className="text-danger">Por favor, ingrese su contraseña.</p>}
           </Form.Group>
 
-          {loginError && <Alert variant="danger" className="mt-4">{loginError}</Alert>}
+          {loginError && <Alert variant="danger">{loginError}</Alert>}
 
-          <div className="text-center mt-4">
-            <Button variant="primary" type="submit" size="lg">
+          <div className="text-center">
+            <Button variant="success" type="submit" size="lg" className={`w-50 ${isMobile && 'w-100'}`}>
               <i className="fa-solid fa-arrow-right-to-bracket"></i> Iniciar sesión
             </Button>
           </div>
         </Form>
-      </div>
+
+        <div className="text-center mt-4">
+          <p className="text-white-50">¿Olvidaste tu contraseña? <a href="https://api.whatsapp.com/send?phone=543572447942&text=¡Hola! Quiero recuperar mi contraseña de GymTM." className="text-white">Recupérala aquí</a></p>
+        </div>
+      </Container>
     </div>
   );
 };

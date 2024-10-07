@@ -1,3 +1,18 @@
 .logo-image-login {
-  height: 7rem;
+  height: 6rem;
+}
+
+.bg-login {
+  background-size: cover;
+  background-position: center;
+}
+
+button:hover {
+  background-color: #28a745;
+  color: white;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.containerMobileLogin {
+  max-width: 380px;
 }
