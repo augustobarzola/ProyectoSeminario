@@ -1,7 +1,5 @@
 const db = require('../database/db');
-const clientsController = require('./clientsController'); // Para buscar clientes
-const usersController = require('./usersController');     // Para buscar usuarios (recepcionista)
-const { convertToISODate, convertToDisplayDate } = require('../helpers/utils');
+const { convertToDisplayDateTime } = require('../helpers/utils');
 
 module.exports = {
   // Obtener todas las asistencias
@@ -23,7 +21,7 @@ module.exports = {
       // Convertir fechas a formato dd/mm/yyyy antes de devolver
       const assistsFormatted = assists.map(assist => ({
         ...assist,
-        fecha_ingreso: convertToDisplayDate(assist.fecha_ingreso),
+        fecha_ingreso: convertToDisplayDateTime(assist.fecha_ingreso),
       }));
 
       res.json(assistsFormatted);
@@ -56,7 +54,7 @@ module.exports = {
       // Convertir fechas a formato dd/mm/yyyy antes de devolver
       const assistFormatted = {
         ...assist[0],
-        fecha_ingreso: convertToDisplayDate(assist.fecha_ingreso),
+        fecha_ingreso: convertToDisplayDateTime(assist.fecha_ingreso),
       };
 
       res.json(assistFormatted);

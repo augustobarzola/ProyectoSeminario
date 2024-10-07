@@ -63,6 +63,6 @@ export const adminRoutes = [
     icon: faUserGear,
     path: '/perfil',
     element: <PerfilScreen />,  
-    color: '#34495e', 
+    color: '#6c757d', 
   },
 ];
