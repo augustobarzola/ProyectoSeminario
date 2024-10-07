@@ -41,9 +41,9 @@ VALUES
 (1, 2, 4, '8 repeticiones', 120, 'Mantener postura correcta'),
 (2, 3, 3, 'Hasta el fallo', 60, 'Mantener el core contraído');
 
-INSERT INTO asistencias (id_cliente, fecha_entrada, fecha_salida)
+INSERT INTO asistencias (id_cliente, id_recepcionista, fecha_ingreso)
 VALUES 
-(3, '2024-01-05 08:00:00', '2024-01-05 10:00:00');
+(3, 2, '2024-01-05 08:00:00');
 
 INSERT INTO metodos_pago (nombre, fecha_alta, fecha_baja)
 VALUES 

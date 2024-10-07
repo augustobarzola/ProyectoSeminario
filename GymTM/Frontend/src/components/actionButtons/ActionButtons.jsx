@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import CustomTooltip from '../customTooltip/CustomTooltip';
 
-const ActionButtons = ({ handleConsult, handleEdit, handleToggleStatus, item, buttonVisibility = { consult: true, edit: true, toggleStatus: true } }) => {
+const ActionButtons = ({ handleConsult, handleEdit, handleToggleStatus, item, buttonVisibility = { consult: true, edit: true, toggleStatus: true }, handleDelete = null }) => {
   return (
     <ButtonGroup>
       {buttonVisibility.consult && (
@@ -19,10 +19,17 @@ const ActionButtons = ({ handleConsult, handleEdit, handleToggleStatus, item, bu
           </Button>
         </CustomTooltip>
       )}
-      {buttonVisibility.toggleStatus && (
+      {handleDelete === null && buttonVisibility.toggleStatus && (
         <CustomTooltip tooltipText={item.fecha_baja ? 'Activar' : 'Desactivar'}>
           <Button variant={item.fecha_baja ? 'success' : 'danger'} onClick={() => handleToggleStatus(item.id)}>
             <i className={`fas ${item.fecha_baja ? 'fa-check' : 'fa-ban'}`}></i>
+          </Button>
+        </CustomTooltip>
+      )}
+      {handleDelete !== null && (
+        <CustomTooltip tooltipText="Eliminar">
+          <Button variant="danger" onClick={() => handleDelete(item.id)} className="me-2">
+            <i className="fas fa-xmark"></i>
           </Button>
         </CustomTooltip>
       )}

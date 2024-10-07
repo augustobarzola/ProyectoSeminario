@@ -71,9 +71,10 @@ CREATE TABLE detalles_rutina_ejercicios (
 CREATE TABLE asistencias (
     id_asistencia INT AUTO_INCREMENT PRIMARY KEY,
     id_cliente INT NOT NULL,
-    fecha_entrada DATETIME NOT NULL,
-    fecha_salida DATETIME NOT NULL,
-    FOREIGN KEY (id_cliente) REFERENCES usuarios(id)
+    id_recepcionista INT,
+    fecha_ingreso DATETIME NOT NULL,
+    FOREIGN KEY (id_cliente) REFERENCES usuarios(id),
+    FOREIGN KEY (id_recepcionista) REFERENCES usuarios(id)
 );
 
 CREATE TABLE metodos_pago (

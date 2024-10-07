@@ -9,6 +9,7 @@ const plansRoutes = require('./plans');
 const routinesRoutes = require('./routines');
 const exercisesRoutes = require('./exercises');
 const rolesRoutes = require('./roles');
+const assistsRoutes = require('./assists');
 
 // Define las rutas y sus controladores
 routes.use('/clientes', clientsRoutes);
@@ -18,6 +19,7 @@ routes.use('/planes', plansRoutes);
 routes.use('/rutinas', routinesRoutes);
 routes.use('/ejercicios', exercisesRoutes);
 routes.use('/roles', rolesRoutes);
+routes.use('/asistencias', assistsRoutes);
 
 // Maneja las exepciones de las rutas
 routes.use("*", (req, res, next) => {
