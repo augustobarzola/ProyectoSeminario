@@ -39,14 +39,14 @@ const AsistenciasScreen = () => {
       fetchAsistencias(); // Refrescar la lista de asistencias
       reset(initialFormState);
     } catch (error) {
-      let mensaje = error.includes('cliente') && error;
+      let mensaje = error.message?.includes('cliente') ? error : '';
       toast.error('Error al registrar la asistencia. '+mensaje);
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      await deleteData(`asistencias/${id}`);
+      await deleteData('asistencias', id);
       toast.success('Asistencia eliminada exitosamente');
       fetchAsistencias(); // Refrescar la lista de asistencias
       reset(initialFormState);
@@ -96,7 +96,12 @@ const AsistenciasScreen = () => {
                 <td className="col-1 text-center">
                     <ActionButtons 
                       handleDelete={handleDelete} 
-                      item={asistencia} 
+                      item={{...asistencia, id: asistencia.id_asistencia}}
+                      buttonVisibility = {{
+                        consult: false,
+                        edit: false,
+                        toggleStatus:false, 
+                      }} 
                     />
                   </td>
               </tr>

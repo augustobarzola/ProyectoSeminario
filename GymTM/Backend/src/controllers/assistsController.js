@@ -15,8 +15,8 @@ module.exports = {
         FROM asistencias a
         INNER JOIN usuarios uc ON a.id_cliente = uc.id
         LEFT JOIN usuarios ur ON a.id_recepcionista = ur.id
-        LEFT JOIN personas pc ON ur.id = pc.id_usuario
-        LEFT JOIN personas pr ON uc.id = pr.id_usuario
+        LEFT JOIN personas pc ON uc.id = pc.id_usuario
+        LEFT JOIN personas pr ON ur.id = pr.id_usuario
         ORDER BY a.fecha_ingreso DESC
       `);
 
@@ -79,7 +79,7 @@ module.exports = {
       }
 
       // Buscar al cliente por DNI
-      const [client] = await db.query('SELECT * FROM usuarios WHERE dni = ?', [dni]);
+      const [client] = await db.query('SELECT * FROM usuarios WHERE usuario = ? AND id_rol = 4', [dni]);
 
       if (client.length === 0) {
         return res.status(404).json({ error: 'Cliente no encontrado.' });
@@ -88,7 +88,7 @@ module.exports = {
       const id_cliente = client[0].id;
 
       // Obtener el id del recepcionista logueado (suponiendo que el recepcionista está logueado)
-      const id_recepcionista = req.user.id; // Asumiendo que tienes un middleware de autenticación que guarda el usuario logueado
+      const id_recepcionista = req.userId; 
 
       // Registrar la asistencia
       const [result] = await db.query(

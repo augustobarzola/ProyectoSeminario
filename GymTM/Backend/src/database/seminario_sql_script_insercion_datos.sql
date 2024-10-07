@@ -43,7 +43,7 @@ VALUES
 
 INSERT INTO asistencias (id_cliente, id_recepcionista, fecha_ingreso)
 VALUES 
-(3, 2, '2024-01-05 08:00:00');
+(4, 2, '2024-01-05 08:00:00');
 
 INSERT INTO metodos_pago (nombre, fecha_alta, fecha_baja)
 VALUES 
