@@ -43,8 +43,8 @@ const CustomFormSelect = ({
           className={`bg-obscure text-white custom-border custom-select ${isOpen && 'open'}`}
         >
           {options.map((opt) => (
-            <option key={opt.id} value={opt.name}>
-              {opt.name}
+            <option key={opt.id} value={opt.name || opt.nombre}>
+              {opt.name || opt.nombre}
             </option>
           ))}
         </Form.Select>

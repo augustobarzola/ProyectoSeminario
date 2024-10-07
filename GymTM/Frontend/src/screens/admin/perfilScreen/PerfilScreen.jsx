@@ -25,7 +25,6 @@ const PerfilScreen = () => {
       const userId = JSON.parse(userData).id_usuario;
 
       const response = await getData(`usuarios/${userId}`);
-      console.log(response)
       setUserData(response);
       reset(response);
     } catch (error) {

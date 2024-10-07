@@ -28,6 +28,8 @@ module.exports = {
           id_usuario: usuario.id,
           usuario: usuario.usuario,
           id_rol: usuario.id_rol,
+          rol: usuario.rol,
+          nombre_completo: usuario.nombre_completo
         },
       });
     } catch (error) {

@@ -4,7 +4,9 @@ const { convertToISODate, convertToDisplayDate } = require('../helpers/utils');
 
 module.exports = {
   getUserAndValidatePassword: async (usuario, password) => {
-    const [rows] = await db.query('SELECT * FROM usuarios WHERE usuario = ? AND fecha_baja IS NULL', [usuario]);
+    const [rows] = await db.query(`SELECT u.*, CONCAT(p.nombre, ', ', p.apellido) AS nombre_completo, r.nombre as rol 
+      FROM usuarios u LEFT JOIN personas p ON u.id = p.id_usuario LEFT JOIN roles r ON r.id = u.id_rol
+       WHERE u.usuario = ? AND u.fecha_baja IS NULL`, [usuario]);
 
     if (rows.length === 0) {
       throw new Error('Usuario/contraseña incorrectos');
@@ -21,32 +23,57 @@ module.exports = {
   },
 
   // Mover la lógica de creación a una función aparte
-  createUserLogic: async (usuario, password, id_rol) => {
-    // Validar campos obligatorios
-    if (!usuario || !password || !id_rol) {
+  createUserLogic: async (usuario, password, id_rol, dni, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono) => {
+    if (!usuario || !password || !id_rol || !dni || !nombre || !apellido || !correo) {
       throw new Error('Faltan campos obligatorios.');
     }
 
     // Hashear la contraseña
     const hashedPassword = await bcrypt.hash(password.toString(), 10);
     
-    const [result] = await db.query(
-      'INSERT INTO usuarios (usuario, contrasenia, id_rol, fecha_alta) VALUES (?, ?, ?, CURDATE())',
-      [usuario, hashedPassword, id_rol]
-    );
+    const connection = await db.getConnection();
+    await connection.beginTransaction();
 
-    return result.insertId; // Retorna el ID del usuario creado
+    try {
+      // Insertar el usuario en la tabla `usuarios`
+      const [userResult] = await connection.query(
+        'INSERT INTO usuarios (usuario, contrasenia, id_rol, fecha_alta) VALUES (?, ?, ?, CURDATE())',
+        [usuario, hashedPassword, id_rol]
+      );
+      const id_usuario = userResult.insertId; // ID del usuario creado
+
+      // Convertir la fecha de nacimiento a formato ISO si es necesario
+      const fechaNacimientoISO = new Date(fecha_nacimiento).toISOString().split('T')[0];
+
+      // Insertar la persona relacionada en la tabla `personas`
+      await connection.query(
+        'INSERT INTO personas (id_usuario, dni, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono, fecha_alta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE())',
+        [id_usuario, dni, sexo, nombre, apellido, fechaNacimientoISO, id_domicilio, correo, telefono]
+      );
+
+      // Confirmar la transacción
+      await connection.commit();
+      return id_usuario; // Retorna el ID del usuario creado
+    } catch (error) {
+      // Revertir la transacción en caso de error
+      await connection.rollback();
+      throw new Error('Error al crear el usuario y la persona: ' + error.message);
+    } finally {
+      connection.release();
+    }
   },
 
   // Método que utiliza la lógica anterior para manejar solicitudes
   createUser: async (req, res) => {
-    const { usuario, password, id_rol } = req.body;
+    const { usuario, password, id_rol, dni, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono } = req.body;
 
     try {
-      const userId = await module.exports.createUserLogic(usuario, password, id_rol);
-      return res.status(201).json({ success: true, message: 'Usuario creado exitosamente', userId });
+      const userId = await module.exports.createUserLogic(
+        usuario, password, id_rol, dni, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono
+      );
+      return res.status(201).json({ success: true, message: 'Usuario y persona creados exitosamente', userId });
     } catch (error) {
-      console.error('Error al crear el usuario:', error);
+      console.error('Error al crear el usuario y la persona:', error);
       return res.status(500).json({ success: false, message: error.message });
     }
   },
@@ -107,11 +134,21 @@ module.exports = {
       const [personasRows] = await db.query('SELECT * FROM personas WHERE id_usuario = ?', [usuario.id]);
       const [rolesRows] = await db.query('SELECT nombre as rol FROM roles WHERE id = ?', [usuario.id_rol]);
   
-      return res.json({
+      const user = {
         ...usuarioSinContrasenia, // Datos del usuario sin la contraseña
         ...personasRows[0], // Agrega detalles de entrenador o cliente
         ...rolesRows[0] // Agrega el rol del usuario
-      });
+      };
+
+      // Convertir fechas a formato dd/mm/yyyy antes de devolver
+      const userFormatted = {
+        ...user,
+        fecha_nacimiento: user.fecha_nacimiento ? convertToDisplayDate(user.fecha_nacimiento) : null,
+        fecha_alta: user.fecha_alta ? convertToDisplayDate(user.fecha_alta) : null,
+        fecha_baja: user.fecha_baja ? convertToDisplayDate(user.fecha_baja) : null,
+      };
+
+      return res.json(userFormatted);
     } catch (error) {
       console.error('Error al obtener el usuario:', error);
       return res.status(500).json({ success: false, message: 'Error en el servidor' });

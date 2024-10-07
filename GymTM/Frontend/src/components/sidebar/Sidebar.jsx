@@ -36,7 +36,7 @@ const Sidebar = () => {
   return (
     <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header d-flex justify-content-between align-items-center">
-        <span className="brand">{!isCollapsed && user?.usuario}</span>
+        <span className="brand ms-1">{!isCollapsed && user?.usuario}</span>
         <Button variant="dark" onClick={toggleSidebar} className="toggle-btn">
           {isCollapsed ? '>' : '<'}
         </Button>

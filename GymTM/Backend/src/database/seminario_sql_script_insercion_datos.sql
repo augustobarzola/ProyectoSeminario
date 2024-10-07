@@ -5,12 +5,12 @@ VALUES
 ('Entrenador', 'Rol para entrenadores con acceso a gestión de rutinas y clientes', '2024-01-01', NULL),
 ('Cliente', 'Rol para clientes del gimnasio', '2024-01-01', NULL);
 
-INSERT INTO usuarios (usuario, contrasenia, id_rol, fecha_alta, fecha_baja)
+INSERT INTO usuarios (usuario, contrasenia, id_rol, especialidad, fecha_alta, fecha_baja)
 VALUES 
-('12345678', '$2b$10$2rSQgTAAIXOcoCqUR4DRd.CIPbvi4e8eKyOMxMSzRbbEGB11pQJiS', 1, '2024-01-01', NULL),  -- Administrador
-('23456789', '$2b$10$CmERQrTHyUKMYWX0ISdUm.kf6OxQafy/bpnXwPbCJ6.Qoz1GAbksu', 2, '2024-01-02', NULL),  -- Recepcionista
-('34567890', '$2b$10$a.ukggczQr7O/E5l9gBTeuJC02Jo0W3xXiJZRghVJZlWR0Z8txpYS', 3, '2024-01-02', NULL),  -- Entrenador
-('45678901', '$2b$10$XvOhQA1TpvXQV3HoatDz1uuR5zbtjwER1aQzOp39YmiPK9obP8k0i', 4, '2024-01-03', NULL);  -- Cliente
+('12345678', '$2b$10$2rSQgTAAIXOcoCqUR4DRd.CIPbvi4e8eKyOMxMSzRbbEGB11pQJiS', 1, NULL, '2024-01-01', NULL),  -- Administrador
+('23456789', '$2b$10$CmERQrTHyUKMYWX0ISdUm.kf6OxQafy/bpnXwPbCJ6.Qoz1GAbksu', 2, NULL, '2024-01-02', NULL),  -- Recepcionista
+('34567890', '$2b$10$a.ukggczQr7O/E5l9gBTeuJC02Jo0W3xXiJZRghVJZlWR0Z8txpYS', 3, 'Musculación', '2024-01-02', NULL),  -- Entrenador
+('45678901', '$2b$10$XvOhQA1TpvXQV3HoatDz1uuR5zbtjwER1aQzOp39YmiPK9obP8k0i', 4, NULL,'2024-01-03', NULL);  -- Cliente
 
 INSERT INTO domicilios (calle, numero, ciudad, provincia, codigo_postal, pais)
 VALUES 
@@ -19,8 +19,10 @@ VALUES
 
 INSERT INTO personas (id_usuario, dni, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono)
 VALUES 
+(1, '12345678', 'Masculino', 'Admin', 'Admin', '2024-01-01', null, '', ''),
 (2, '23456789', 'Masculino', 'Carlos', 'Lopez', '1985-04-10', null, '', ''),
-(3, '34567890', 'Femenino', 'Maria', 'Gonzalez', '1990-05-15', 1, '', '');
+(3, '34567890', 'Femenino', 'Maria', 'Gonzalez', '1990-05-15', 1, '', ''),
+(4, '45678901', 'Masculino', 'Juan', 'Sanchez', '1995-06-20', 2, '', '');
 
 INSERT INTO ejercicios (nombre, descripcion)
 VALUES 

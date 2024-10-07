@@ -66,7 +66,7 @@ const PlansScreen = () => {
   };
 
   // Cambiar a modo Modificar
-  const handleEditPlan = async (id) => {
+  const handleEdit = async (id) => {
     try {
       const plan = await getData(`planes/${id}`);
       reset(plan);
@@ -77,7 +77,7 @@ const PlansScreen = () => {
   };
 
   // Cambiar a modo Consultar
-  const handleViewPlan = async (id) => {
+  const handleConsult = async (id) => {
     try {
       const plan = await getData(`planes/${id}`);
       reset(plan);
@@ -159,8 +159,8 @@ const PlansScreen = () => {
                   <td>{plan.fecha_baja}</td>
                   <td className="col-1 text-center">
                     <ActionButtons 
-                      handleConsult={handleViewPlan} 
-                      handleEdit={handleEditPlan} 
+                      handleConsult={handleConsult} 
+                      handleEdit={handleEdit} 
                       handleToggleStatus={handleToggleStatus} 
                       item={plan} 
                     />

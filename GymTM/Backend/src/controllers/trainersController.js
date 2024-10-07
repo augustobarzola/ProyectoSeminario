@@ -3,48 +3,48 @@ const { convertToISODate, convertToDisplayDate } = require('../helpers/utils');
 const usersController = require('./usersController');
 
 module.exports = {
-  getAllClients: async (req, res) => {
+  getAllTrainers: async (req, res) => {
     try {
-      const [clientes] = await db.query('SELECT * FROM usuarios u LEFT JOIN personas p ON p.id_usuario = u.id WHERE u.id_rol = 4');
+      const [entrenadores] = await db.query('SELECT * FROM usuarios u LEFT JOIN personas p ON p.id_usuario = u.id WHERE u.id_rol = 3');
       
       // Convertir fechas a formato dd/mm/yyyy antes de devolver
-      const clientesFormatted = clientes.map(cliente => ({
-        ...cliente,
-        fecha_nacimiento: cliente.fecha_nacimiento ? convertToDisplayDate(cliente.fecha_nacimiento) : null,
-        fecha_alta: cliente.fecha_alta ? convertToDisplayDate(cliente.fecha_alta) : null,
-        fecha_baja: cliente.fecha_baja ? convertToDisplayDate(cliente.fecha_baja) : null,
+      const entrenadoresFormatted = entrenadores.map(entrenador => ({
+        ...entrenador,
+        fecha_nacimiento: entrenador.fecha_nacimiento ? convertToDisplayDate(entrenador.fecha_nacimiento) : null,
+        fecha_alta: entrenador.fecha_alta ? convertToDisplayDate(entrenador.fecha_alta) : null,
+        fecha_baja: entrenador.fecha_baja ? convertToDisplayDate(entrenador.fecha_baja) : null,
       }));
 
-      res.json(clientesFormatted);
+      res.json(entrenadoresFormatted);
     } catch (error) {
-      res.status(500).json({ error: 'Error al obtener los clientes.' });
+      res.status(500).json({ error: 'Error al obtener los entrenadores.' });
     }
   },
 
-  getClientById: async (req, res) => {
+  getTrainerById: async (req, res) => {
     try {
-      const clientId = req.params.id;
-      const [client] = await db.query('SELECT * FROM usuarios u LEFT JOIN personas p ON p.id_usuario = u.id WHERE u.id = ? AND u.id_rol = 4', [clientId]);
+      const trainerId = req.params.id;
+      const [entrenador] = await db.query('SELECT * FROM usuarios u LEFT JOIN personas p ON p.id_usuario = u.id WHERE u.id = ? AND u.id_rol = 3', [trainerId]);
 
-      if (client.length === 0) {
-        return res.status(404).json({ error: 'Cliente no encontrado.' });
+      if (entrenador.length === 0) {
+        return res.status(404).json({ error: 'Entrenador no encontrado.' });
       }
 
       // Convertir fechas a formato dd/mm/yyyy antes de devolver
-      const clientFormatted = {
-        ...client[0],
-        fecha_nacimiento: client[0].fecha_nacimiento ? convertToDisplayDate(client[0].fecha_nacimiento) : null,
-        fecha_alta: client[0].fecha_alta ? convertToDisplayDate(client[0].fecha_alta) : null,
-        fecha_baja: client[0].fecha_baja ? convertToDisplayDate(client[0].fecha_baja) : null,
+      const entrenadorFormatted = {
+        ...entrenador[0],
+        fecha_nacimiento: entrenador[0].fecha_nacimiento ? convertToDisplayDate(entrenador[0].fecha_nacimiento) : null,
+        fecha_alta: entrenador[0].fecha_alta ? convertToDisplayDate(entrenador[0].fecha_alta) : null,
+        fecha_baja: entrenador[0].fecha_baja ? convertToDisplayDate(entrenador[0].fecha_baja) : null,
       };
 
-      res.json(clientFormatted);
+      res.json(entrenadorFormatted);
     } catch (error) {
-      res.status(500).json({ error: 'Error al obtener el cliente.' });
+      res.status(500).json({ error: 'Error al obtener el entrenador.' });
     }
   },
 
-  createClient: async (req, res) => {
+  createTrainer: async (req, res) => {
     const connection = await db.getConnection();
     await connection.beginTransaction();
 
@@ -60,7 +60,7 @@ module.exports = {
       const fechaNacimientoISO = fecha_nacimiento ? convertToISODate(fecha_nacimiento) : null;
 
       // 1. Insertar usuario a través del controlador de usuarios
-      const id_usuario = await usersController.createUserLogic(dni, dni, 4);
+      const id_usuario = await usersController.createUserLogic(dni, dni, 3);
 
       let id_domicilio;
 
@@ -73,33 +73,33 @@ module.exports = {
         id_domicilio = domicilioResult.insertId;
       }
 
-      // 3. Insertar cliente
+      // 3. Insertar entrenador
       await connection.query(
         'INSERT INTO personas (id_usuario, dni, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono, fecha_alta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE())',
         [id_usuario, dni, sexo, nombre, apellido, fechaNacimientoISO, id_domicilio, correo, telefono]
       );
 
       await connection.commit();
-      res.json({ message: 'Cliente creado exitosamente.' });
+      res.json({ message: 'Entrenador creado exitosamente.' });
       
     } catch (error) {
       await connection.rollback();
       console.error(error);
-      res.status(500).json({ error: 'Error al crear el cliente.' });
+      res.status(500).json({ error: 'Error al crear el entrenador.' });
     } finally {
       connection.release();
     }
   },
 
-  updateClient: async (req, res) => {
+  updateTrainer: async (req, res) => {
     const connection = await db.getConnection();
     await connection.beginTransaction();
 
     try {
-      const clientId = req.params.id;
+      const trainerId = req.params.id;
       const { nombre, apellido, sexo, fecha_nacimiento, calle, numero, ciudad, provincia, codigo_postal, pais, correo, telefono } = req.body;
 
-      if (!clientId) {
+      if (!trainerId) {
         return res.status(400).json({ error: 'El campo "id" es obligatorio.' });
       }
 
@@ -117,47 +117,47 @@ module.exports = {
         id_domicilio = domicilioResult.insertId;
       }
 
-      // 3. Actualizar cliente
+      // 3. Actualizar entrenador
       await connection.query(
         'UPDATE personas SET nombre = ?, apellido = ?, sexo = ?, fecha_nacimiento = ?, id_domicilio = ?, correo = ?, telefono = ? WHERE id_usuario = ?',
-        [nombre, apellido, sexo, fechaNacimientoISO, id_domicilio, correo, telefono, clientId]
+        [nombre, apellido, sexo, fechaNacimientoISO, id_domicilio, correo, telefono, trainerId]
       );
 
       await connection.commit();
-      res.json({ message: 'Cliente actualizado exitosamente.' });
+      res.json({ message: 'Entrenador actualizado exitosamente.' });
       
     } catch (error) {
       await connection.rollback();
       console.error(error);
-      res.status(500).json({ error: 'Error al actualizar el cliente.' });
+      res.status(500).json({ error: 'Error al actualizar el entrenador.' });
     } finally {
       connection.release();
     }
   },
 
-  toggleStatusClient: async (req, res) => {
+  toggleStatusTrainer: async (req, res) => {
     const connection = await db.getConnection();
     await connection.beginTransaction();
 
     try {
-      const clientId = req.params.id;
+      const trainerId = req.params.id;
 
-      if (!clientId) {
+      if (!trainerId) {
         return res.status(400).json({ error: 'El campo "id" es obligatorio.' });
       }
 
-      // Cambiar el estado del cliente
-      await connection.query('UPDATE usuarios SET fecha_baja = IF(fecha_baja IS NULL, CURDATE(), NULL) WHERE id = ? AND u.id_rol = 4', [clientId]);
+      // Cambiar el estado del entrenador
+      await connection.query('UPDATE usuarios SET fecha_baja = IF(fecha_baja IS NULL, CURDATE(), NULL) WHERE id = ? AND u.id_rol = 3', [trainerId]);
 
       // Cambiar el estado del usuario a través del controlador de usuarios
-      await usersController.toggleUserStatusLogic(clientId);
+      await usersController.toggleUserStatusLogic(trainerId);
 
       await connection.commit();
-      res.json({ message: 'Estado del cliente y su usuario actualizado exitosamente.' });
+      res.json({ message: 'Estado del entrenador y su usuario actualizado exitosamente.' });
     } catch (error) {
       await connection.rollback();
       console.error(error);
-      res.status(500).json({ error: 'Error al actualizar el estado del cliente.' });
+      res.status(500).json({ error: 'Error al actualizar el estado del entrenador.' });
     } finally {
       connection.release();
     }

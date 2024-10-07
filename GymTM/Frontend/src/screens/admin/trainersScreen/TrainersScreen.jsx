@@ -10,13 +10,15 @@ import ActionButtons from '../../../components/actionButtons/ActionButtons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import CustomButtonsGroup from '../../../components/customButtonsGroup/CustomButtonsGroup';
+import CustomDateTimePicker from '../../../components/customDateTimePicker/CustomDateTimePicker';
+import { getUserData } from '../../../services/authService';
 
-const UsersScreen = () => {
+const TrainersScreen = () => {
   const [mode, setMode] = useState('L'); // Modo inicial: Lista
-  const [users, setUsers] = useState([]); // Lista de usuarios
-  const [filteredUsers, setFilteredUsers] = useState([]); // Usuarios filtrados por búsqueda
+  const [trainers, setTrainers] = useState([]); // Lista de entrenadores
+  const [filteredTrainers, setFilteredTrainers] = useState([]); // Entrenadores filtrados por búsqueda
   const [isLoading, setIsLoading] = useState(false);
-  const [roles, setRoles] = useState([]);
+  const [user, setUser] = useState(null);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
@@ -24,54 +26,46 @@ const UsersScreen = () => {
     nombre: '',
     apellido: '',
     dni: '',
+    sexo: '',
     correo: '',
-    rol: '',
-    estado: true
+    telefono: '',
+    especialidad: '',
+    fecha_nacimiento: ''
   };
 
   useEffect(() => {
+    const data = getUserData();
+    setUser(data);
+  }, []);
+
+  useEffect(() => {
     if (mode === 'L') {
-      fetchUsers();
-    } else {
-      fetchRoles();
+      fetchTrainers();
     }
   }, [mode]);
 
-  // Obtener usuarios
-  const fetchUsers = async () => {
+  // Obtener entrenadores
+  const fetchTrainers = async () => {
     setIsLoading(true);
     try {
-      const response = await getData('usuarios');
-      setUsers(response);
-      setFilteredUsers(response);
+      const response = await getData('entrenadores');
+      setTrainers(response);
+      setFilteredTrainers(response);
     } catch (error) {
-      toast.error('Error al obtener usuarios.');
+      toast.error('Error al obtener entrenadores.');
     } finally {
       setIsLoading(false);
     }
   };
 
-    // Obtener usuarios
-    const fetchRoles = async () => {
-      setIsLoading(true);
-      try {
-        const response = await getData('roles');
-        setRoles(response);
-      } catch (error) {
-        toast.error('Error al obtener roles.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-  // Filtrar usuarios por DNI
+  // Filtrar entrenadores por DNI
   const handleSearch = (e) => {
     const dni = e.target.value;
     if (dni) {
-      const results = users.filter(user => user.dni.includes(dni));
-      setFilteredUsers(results);
+      const results = trainers.filter(trainer => trainer.dni.includes(dni));
+      setFilteredTrainers(results);
     } else {
-      setFilteredUsers(users);
+      setFilteredTrainers(trainers);
     }
   };
 
@@ -81,45 +75,34 @@ const UsersScreen = () => {
     setMode('A');
   };
 
-  // Cambiar a modo Consultar con usuario seleccionado
-  const handleConsult = async (id) => {
-    const usuario = await getData(`usuarios/${id}`);
-    reset(usuario);
-    setMode('C');
-  };
-
-  // Cambiar a modo Modificar con usuario seleccionado
+  // Cambiar a modo Modificar con entrenador seleccionado
   const handleEdit = async (id) => {
-    const usuario = await getData(`usuarios/${id}`);
-    reset(usuario);
+    const trainer = await getData(`entrenadores/${id}`);
+    reset(trainer);
     setMode('M');
   };
 
-  // Dar de baja/activar usuario
-  const handleToggleStatus = async (id) => {
-    try {
-      await updateData('usuarios/toggleStatus', { id });
-      toast.success("Estado del usuario actualizado exitosamente!");
-      fetchUsers();
-    } catch (error) {
-      toast.error('Hubo un error al actualizar el estado del usuario.');
-    }
+  // Cambiar a modo Consultar
+  const handleConsult = async (id) => {
+    const trainer = await getData(`entrenadores/${id}`);
+    reset(trainer);
+    setMode('C');
   };
 
-  // Guardar usuario (Alta o Modificar)
+  // Guardar entrenador (Alta o Modificar)
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
       if (mode === 'A') {
-        await insertData('usuarios', { body: data });
-        toast.success('Usuario creado exitosamente');
+        await insertData('entrenadores', { body: data });
+        toast.success('Entrenador creado exitosamente');
       } else if (mode === 'M') {
-        await updateData('usuarios', { id: data.id, body: data });
-        toast.success('Usuario actualizado exitosamente');
+        await updateData('entrenadores', { id: data.id, body: data });
+        toast.success('Entrenador actualizado exitosamente');
       }
       handleBack();
     } catch (error) {
-      toast.error('Error al guardar usuario.');
+      toast.error('Error al guardar entrenador.');
     } finally {
       setIsLoading(false);
     }
@@ -134,38 +117,44 @@ const UsersScreen = () => {
     <Container fluid className="py-4">
       {mode === 'L' && (
         <>
-          <h3 className="text-center">Lista de Usuarios</h3>
+          <h3 className="text-center">Lista de Entrenadores</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <Form.Control className="bg-obscure custom-border text-white w-35" type="text" placeholder="Buscar por DNI" onChange={handleSearch} />
-            <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} />  Agregar</Button>
+            {user?.id_rol === 1 && <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> Agregar</Button>}
           </div>
           <Table striped bordered hover variant="dark" className='m-0 custom-border' responsive>
             <thead>
               <tr>
                 <th>Nombre</th>
                 <th>DNI</th>
-                <th>Correo</th>
-                <th>Rol</th>
+                <th>Sexo</th>
+                <th>Especialidad</th>
+                <th>Fecha de Nacimiento</th>
                 <th>Fecha Alta</th>
                 <th>Fecha Baja</th>
                 <th className="">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {filteredUsers?.map(user => (
-                <tr key={user.id}>
-                  <td>{user.nombre} {user.apellido}</td>
-                  <td>{user.dni}</td>
-                  <td>{user.correo}</td>
-                  <td>{user.rol}</td>
-                  <td>{user.fecha_alta}</td>
-                  <td>{user.fecha_baja}</td>
+              {filteredTrainers?.map(trainer => (
+                <tr key={trainer.id}>
+                  <td>{trainer.nombre}, {trainer.apellido}</td>
+                  <td>{trainer.dni}</td>
+                  <td>{trainer.sexo}</td>
+                  <td>{trainer.especialidad}</td>
+                  <td>{trainer.fecha_nacimiento}</td>
+                  <td>{trainer.fecha_alta}</td>
+                  <td>{trainer.fecha_baja}</td>
                   <td className="col-1 text-center">
                     <ActionButtons 
                       handleConsult={handleConsult} 
                       handleEdit={handleEdit} 
-                      handleToggleStatus={handleToggleStatus} 
-                      item={user} 
+                      item={trainer} 
+                      buttonVisibility = {{
+                        consult: true,
+                        edit: user?.id_rol === 1, // Solo mostrar si el rol es 1
+                        toggleStatus: user?.id_rol === 1, // Solo mostrar si el rol es 1
+                      }}
                     />
                   </td>
                 </tr>
@@ -178,11 +167,11 @@ const UsersScreen = () => {
       {(mode !== 'L') && (
         <>
           <h3>
-          {mode === 'A' ? 'Alta de Usuario' : mode === 'M' ? 'Modificar Usuario' : 'Consultar Usuario'}
+            {mode === 'A' ? 'Alta de Entrenador' : mode === 'M' ? 'Modificar Entrenador' : 'Consultar Entrenador'}
           </h3>
           <Form onSubmit={handleSubmit(onSubmit)}>
-            {/* Sección Datos del Usuario */}
-            <h4 className="text-center">Datos del Usuario</h4>
+            {/* Sección Datos del Entrenador */}
+            <h4 className="text-center">Datos del Entrenador</h4>
             <CustomFormInput
               label="Nombre"
               controlId="nombre"
@@ -203,7 +192,26 @@ const UsersScreen = () => {
               register={register}
               errors={errors.dni}
               option={mode}
-              disabled={mode === 'M'}
+              disabled={mode === 'C' || mode === 'M'}
+            />
+            <CustomFormSelect
+              label="Sexo"
+              controlId="sexo"
+              register={register}
+              errors={errors.sexo}
+              options={[
+                { id: 1, name: 'Masculino' },
+                { id: 2, name: 'Femenino' },
+                { id: 3, name: 'Otro' },
+              ]}
+              option={mode}
+            />
+            <CustomDateTimePicker
+              label="Fecha de Nacimiento"
+              controlId="fecha_nacimiento"
+              register={register}
+              errors={errors.fecha_nacimiento}
+              option={mode}
             />
             <CustomFormInput
               label="Correo"
@@ -222,14 +230,16 @@ const UsersScreen = () => {
               option={mode}
               required={false}
             />
-            <CustomFormSelect
-              label="Rol"
-              controlId="rol"
+            
+            <CustomFormInput
+              label="Especialidad"
+              controlId="especialidad"
               register={register}
-              errors={errors.rol}
-              options={roles}
+              errors={errors.especialidad}
               option={mode}
+              required={false}
             />
+
             {mode !== 'A' && (
               <>
                 <CustomFormInput
@@ -255,6 +265,7 @@ const UsersScreen = () => {
                 />      
               </>
             )}     
+
             <CustomButtonsGroup 
               mode={mode} 
               isSubmitting={isLoading} 
@@ -269,4 +280,4 @@ const UsersScreen = () => {
   );
 };
 
-export default UsersScreen;
+export default TrainersScreen;

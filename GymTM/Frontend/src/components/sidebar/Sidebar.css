@@ -1,17 +1,14 @@
 .sidebar {
-  width: 100%; /* Ancho completo en dispositivos móviles */
-  max-width: 250px; /* Establece un ancho máximo para pantallas más grandes */
-  min-width: 70px;
+  width: 200px; /* Establece un ancho máximo para pantallas más grandes */
   height: 100%; /* Ocupa el 100% de la altura del contenedor main */
   background-color: #343a40;
-  padding: 0.3rem; /* Usa rem para que sea más responsivo */
-  overflow-y: auto; /* Para permitir scroll si hay demasiadas opciones */
+  padding: 0.2rem; /* Usa rem para que sea más responsivo */
   position: relative; /* Asegura que no se superponga con el header/footer */
   transition: width 0.3s ease; /* Transición suave al cambiar el ancho */
 }
 
 .sidebar.collapsed {
-  width: 70px; /* Un ancho fijo para la versión colapsada */
+  width: 65px; /* Un ancho fijo para la versión colapsada */
   transition: width 0.3s ease; /* Transición suave al colapsar */
 }
 
@@ -22,19 +19,19 @@
 }
 
 .brand {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   color: white;
 }
 
 .sidebar-icon {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .toggle-btn {
   background: none;
   border: none;
   color: white;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .mobile-menu-btn {

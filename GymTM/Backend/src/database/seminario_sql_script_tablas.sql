@@ -11,6 +11,7 @@ CREATE TABLE usuarios (
     usuario VARCHAR(12) NOT NULL UNIQUE,
     contrasenia VARCHAR(255) NOT NULL,
     id_rol INT NOT NULL,
+    especialidad VARCHAR(50),
     fecha_alta DATE NOT NULL,
     fecha_baja DATE,
     FOREIGN KEY (id_rol) REFERENCES roles(id)

@@ -11,12 +11,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import CustomButtonsGroup from '../../../components/customButtonsGroup/CustomButtonsGroup';
 import CustomDateTimePicker from '../../../components/customDateTimePicker/CustomDateTimePicker';
+import { calcularEdad } from '../../../utils/helper';
+import { getUserData } from '../../../services/authService';
 
 const ClientsScreen = () => {
   const [mode, setMode] = useState('L'); // Modo inicial: Lista
   const [clients, setClients] = useState([]); // Lista de clientes
   const [filteredClients, setFilteredClients] = useState([]); // Clientes filtrados por búsqueda
   const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState(null);
   
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
@@ -34,6 +37,11 @@ const ClientsScreen = () => {
     ciudad: '',
     codigo_postal: ''
   };
+
+  useEffect(() => {
+    const data = getUserData();
+    setUser(data);
+  }, []);
 
   useEffect(() => {
     if (mode === 'L') {
@@ -134,7 +142,7 @@ const ClientsScreen = () => {
           <h3 className="text-center">Lista de Clientes</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <Form.Control className="bg-obscure custom-border text-white w-35" type="text" placeholder="Buscar por DNI" onChange={handleSearch} />
-            <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> Agregar</Button>
+            {(user?.id_rol === 1 || user?.id_rol === 2) && <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> Agregar</Button>}
           </div>
           <Table striped bordered hover variant="dark" className='m-0 custom-border' responsive>
             <thead>
@@ -142,6 +150,8 @@ const ClientsScreen = () => {
                 <th>Nombre</th>
                 <th>DNI</th>
                 <th>Sexo</th>
+                <th>Edad</th>
+                <th>Plan Pago</th>
                 <th>Fecha Alta</th>
                 <th>Fecha Baja</th>
                 <th className="">Acciones</th>
@@ -153,6 +163,8 @@ const ClientsScreen = () => {
                   <td>{client.nombre}, {client.apellido}</td>
                   <td>{client.dni}</td>
                   <td>{client.sexo}</td>
+                  <td>{calcularEdad(client.fecha_nacimiento)}</td>
+                  <td>{client.plan}</td>
                   <td>{client.fecha_alta}</td>
                   <td>{client.fecha_baja}</td>
                   <td className="col-1 text-center">
@@ -161,6 +173,11 @@ const ClientsScreen = () => {
                       handleEdit={handleEdit} 
                       handleToggleStatus={handleToggleStatus} 
                       item={client} 
+                      buttonVisibility = {{
+                        consult: true,
+                        edit: user?.id_rol === 1 || user?.id_rol === 2, // Solo mostrar si el rol es 1 o 2
+                        toggleStatus: user?.id_rol === 1 || user?.id_rol === 2, // Solo mostrar si el rol es 1 o 2
+                      }}
                     />
                   </td>
                 </tr>
@@ -237,6 +254,32 @@ const ClientsScreen = () => {
               required={false}
             />
 
+            {mode !== 'A' && (
+              <>
+                <CustomFormInput
+                  label="Fecha de Alta"
+                  controlId="fecha_alta"
+                  register={register}
+                  errors={register.fecha_alta}
+                  mode={mode}
+                  disabled={true}
+                  required={false}
+                  extra={<i className="fa-solid fa-calendar-days"></i>}
+                />
+
+                <CustomFormInput
+                  label="Fecha de Baja"
+                  controlId="fecha_baja"
+                  register={register}
+                  errors={register.fecha_baja}
+                  mode={mode}
+                  disabled={true}
+                  required={false}
+                  extra={<i className="fa-solid fa-calendar-days"></i>}
+                />      
+              </>
+            )}     
+
             {/* Sección Domicilio del Cliente */}
             <h4 className="text-center">Domicilio del Cliente</h4>
             <CustomFormInput
@@ -293,6 +336,43 @@ const ClientsScreen = () => {
               controlId="codigo_postal"
               register={register}
               errors={errors.codigo_postal}
+              option={mode}
+              required={false}
+            />
+
+            {/* Sección Plan Pago del Cliente */}
+            <h4 className="text-center">Plan de Pago</h4>
+            <CustomFormSelect
+              label="Plan"
+              controlId="plan"
+              register={register}
+              errors={errors.plan}
+              options={[
+                { id: 1, name: 'Mensual' },
+                { id: 2, name: 'Trimestral' },
+                { id: 3, name: 'Semestral' },
+              ]}
+              option={mode}
+              required={false}
+            />
+            <CustomFormSelect
+              label="Metodo de Pago"
+              controlId="metodoDePago"
+              register={register}
+              errors={errors.metodoDePago}
+              options={[
+                { id: 1, name: 'Efectivo' },
+                { id: 2, name: 'Tarjeta' },
+                { id: 3, name: 'Debito' },
+              ]}
+              option={mode}
+              required={false}
+            />
+            <CustomFormInput
+              label="Importe"
+              controlId="importe"
+              register={register}
+              errors={errors.importe}
               option={mode}
               required={false}
             />
