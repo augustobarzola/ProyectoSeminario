@@ -15,7 +15,7 @@ const PerfilScreen = () => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
-  const { register: registerPassword, handleSubmit: handleSubmitPassword, reset: resetPassword, formState: { errors: errorsPassword }, watch: watchPassword } = useForm();
+  const { register: registerPassword, handleSubmit: handleSubmitPassword, reset: resetPassword, formState: { errors: errorsPassword }, watch: watchPassword, setError, clearErrors, } = useForm();
 
   const formInitialValue = {
     contrasenia: '',
@@ -46,6 +46,18 @@ const PerfilScreen = () => {
 
   const onSubmit = async (data) => {
     setIsLoading(true);
+
+    // Validar que las contraseñas coincidan
+    if (data.nueva_contrasenia !== data.repetir_contrasenia) {
+      setError('repetir_contrasenia', {
+        type: 'manual',
+        message: 'Las contraseñas no coinciden.',
+      });
+      setIsLoading(false);
+      return;
+    } else {
+      clearErrors('repetir_contrasenia'); // Elimina el error si las contraseñas coinciden
+    }
 
     try {
       await updateData('usuarios/updatePassword', { id: userData.id_usuario, body: data });
@@ -141,22 +153,17 @@ const PerfilScreen = () => {
               label="Nueva Contraseña"
               controlId="nueva_contrasenia"
               register={registerPassword}
-              errors={errorsPassword}
+              errors={errorsPassword.nueva_contrasenia}
             />
             <CustomFormInputPassword
               label="Repetir Contraseña"
               controlId="repetir_contrasenia"
               register={registerPassword}
-              errors={errorsPassword}
-              placeholder="Repita su contraseña"
-              validate={{
-                validate: {
-                  matchesPreviousPassword: (value) => {
-                    const password = watchPassword('nueva_contrasenia');
-                    return password === value || 'Las contraseñas no coinciden.';
-                  },
-                },
-              }}
+              errors={errorsPassword.repetir_contrasenia}
+              placeholder="Repita la contraseña"
+              validate={(value) =>
+                value === password || 'Las contraseñas no coinciden.'
+              }
             />
 
             <CustomButtonsGroup

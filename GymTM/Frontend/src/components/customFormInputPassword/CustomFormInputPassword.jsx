@@ -8,7 +8,7 @@ const CustomFormInputPassword = ({
   controlId,
   register,
   errors,
-  placeholder = 'Ingrese su contraseña',
+  placeholder = 'Ingrese la contraseña',
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -34,14 +34,14 @@ const CustomFormInputPassword = ({
                 message: 'La contraseña debe tener al menos 6 caracteres.'
               }
             })}
-            isInvalid={errors[controlId]}
+            isInvalid={errors}
             className="bg-obscure text-white custom-border-right"
           />
           <InputGroup.Text onClick={togglePasswordVisibility} style={{ cursor: 'pointer' }} className="bg-obscure text-white custom-border rounded-end">
             <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
           </InputGroup.Text>
           <Form.Control.Feedback type="invalid">
-            {errors[controlId]?.message}
+            {errors?.message}
           </Form.Control.Feedback>
         </InputGroup>
       </Col>
