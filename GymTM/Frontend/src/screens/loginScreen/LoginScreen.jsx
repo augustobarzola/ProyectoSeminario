@@ -27,7 +27,7 @@ const Login = () => {
   };
 
   return (
-    <div className="d-flex align-items-center bg-login" style={{ height: '100vh', backgroundImage: `url(${gymBackground})` }}>
+    <div className="d-flex align-items-center bg-login bg-dark" style={{ height: '100vh', backgroundImage: `url(${gymBackground})` }}>
       <Container className={`bg-dark text-light rounded p-5 shadow-lg ${isMobile && 'containerMobileLogin'}`}>
         <Row className="justify-content-center mb-4">
           <Col className="text-center">
