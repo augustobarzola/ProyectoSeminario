@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const HomeScreen = () => {
   return (
-    <Container fluid className="home-screen text-white py-5">
+    <Container fluid className="text-white py-5">
       {/* Sección de bienvenida y motivación */}
       <Row className="align-items-center text-center mb-5 welcome-section">
         <Col>

@@ -10,12 +10,14 @@ import ActionButtons from '../../../components/actionButtons/ActionButtons';
 import CustomButtonsGroup from '../../../components/customButtonsGroup/CustomButtonsGroup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 
 const PlansScreen = () => {
   const [mode, setMode] = useState('L'); // 'L'ist, 'A'dd, 'M'odify, 'C'onsult
   const [plans, setPlans] = useState([]);
   const [filteredPlans, setFilteredPlans] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const isMobile = useIsMobile();
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
@@ -129,12 +131,12 @@ const PlansScreen = () => {
           <h3 className="text-center">Lista de Planes</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <Form.Control
-              className="bg-obscure custom-border text-white w-35"
+              className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`}
               type="text"
               placeholder="Buscar por nombre"
               onChange={handleSearch}
             />
-            <Button variant="success" onClick={handleAddPlan}><FontAwesomeIcon icon={faPlus} /> Agregar Plan</Button>
+            <Button variant="success" onClick={handleAddPlan}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Agregar plan'}</Button>
           </div>
           <Table striped bordered hover variant="dark" className='m-0 custom-border' responsive>
             <thead>

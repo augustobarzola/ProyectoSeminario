@@ -10,6 +10,7 @@ import ActionButtons from '../../../components/actionButtons/ActionButtons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import CustomButtonsGroup from '../../../components/customButtonsGroup/CustomButtonsGroup';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 
 const UsersScreen = () => {
   const [mode, setMode] = useState('L'); // Modo inicial: Lista
@@ -17,6 +18,7 @@ const UsersScreen = () => {
   const [filteredUsers, setFilteredUsers] = useState([]); // Usuarios filtrados por búsqueda
   const [isLoading, setIsLoading] = useState(false);
   const [roles, setRoles] = useState([]);
+  const isMobile = useIsMobile();
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
@@ -140,8 +142,8 @@ const UsersScreen = () => {
         <>
           <h3 className="text-center">Lista de Usuarios</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <Form.Control className="bg-obscure custom-border text-white w-35" type="text" placeholder="Buscar por DNI" onChange={handleSearch} />
-            <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} />  Agregar</Button>
+            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar por DNI" onChange={handleSearch} />
+            <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Agregar usuario'}</Button>
           </div>
           <Table striped bordered hover variant="dark" className='m-0 custom-border' responsive>
             <thead>

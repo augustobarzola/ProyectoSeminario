@@ -9,6 +9,7 @@ import CustomButtonsGroup from '../../components/customButtonsGroup/CustomButton
 import CustomFormInputPassword from '../../components/customFormInputPassword/CustomFormInputPassword';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 const PerfilScreen = () => {
   const [mode, setMode] = useState('C'); // Modo inicial: Consulta
@@ -16,6 +17,7 @@ const PerfilScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const { register: registerPassword, handleSubmit: handleSubmitPassword, reset: resetPassword, formState: { errors: errorsPassword }, watch: watchPassword, setError, clearErrors, } = useForm();
+  const isMobile = useIsMobile();
 
   const formInitialValue = {
     contrasenia: '',
@@ -141,7 +143,7 @@ const PerfilScreen = () => {
             <Alert variant="danger">No se encontraron datos de usuario.</Alert>
           )}
           <div className="d-flex justify-content-center mt-3">
-            <Button variant="primary" onClick={handleEdit} size="lg"><FontAwesomeIcon icon={faEdit} style={{ cursor: 'pointer' }} /> Modificar Contraseña</Button>
+            <Button variant="primary" onClick={handleEdit} size={!isMobile && 'lg'}><FontAwesomeIcon icon={faEdit} style={{ cursor: 'pointer' }} /> Modificar Contraseña</Button>
           </div>
         </div>
       )}

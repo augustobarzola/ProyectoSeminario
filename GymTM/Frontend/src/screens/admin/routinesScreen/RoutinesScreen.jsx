@@ -12,6 +12,8 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import ExerciseCreationForm from './exerciseCreationForm/ExerciseCreationForm'; 
 import CustomDateTimePicker from '../../../components/customDateTimePicker/CustomDateTimePicker';
 import { getUserData } from '../../../services/authService';
+import { useIsMobile } from '../../../hooks/useIsMobile';
+import CustomButtonsGroup from '../../../components/customButtonsGroup/CustomButtonsGroup';
 
 const RoutinesScreen = () => {
   const [mode, setMode] = useState('L'); // Modos: L = Listar, A = Alta, M = Modificar, C = Consultar, Asignar, E = Crear Ejercicio
@@ -21,6 +23,7 @@ const RoutinesScreen = () => {
   const [clients, setClients] = useState([]); 
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState(null);
+  const isMobile = useIsMobile();
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const initialRoutineFormState = {
@@ -169,8 +172,8 @@ const RoutinesScreen = () => {
         <>
           <h3 className="text-center">Rutinas</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <Form.Control className="bg-obscure custom-border text-white w-35" type="text" placeholder="Buscar rutinas" />
-            <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> Crear Rutina</Button>
+            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar rutinas" />
+            <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Crear rutina'}</Button>
           </div>
           <Table striped bordered hover variant="dark" className="custom-border" responsive>
             <thead>
@@ -205,93 +208,97 @@ const RoutinesScreen = () => {
       )}
 
       {/* Modo crear, consultar o modificar rutina */}
-      {(mode === 'A' || mode === 'M') && (
-  <>
-    <h3>{mode === 'A' ? 'Crear Rutina' : 'Modificar Rutina'}</h3>
-    <Form onSubmit={handleSubmit(onSubmitRoutine)}>
-      <CustomFormInput
-        label="Nombre de la Rutina"
-        controlId="nombre_rutina"
-        register={register}
-        errors={errors.nombre_rutina}
-      />
-      <CustomFormInput
-        label="Descripción"
-        controlId="descripcion"
-        register={register}
-        errors={errors.descripcion}
-      />
-      
-      {/* Agregar sección para seleccionar ejercicios y sus detalles */}
-      <h4 className="text-center">Detalle de la rutina</h4>
-      <CustomFormSelect
-        label="Ejercicio"
-        controlId="selectedExercise"
-        register={register}
-        options={exercises} // Las opciones deben provenir del fetchExercises
-        value={selectedExercise}
-        onChange={e => setSelectedExercise(exercises.find(ex => ex.id === e.target.value))}
-      />
-      <CustomFormInput
-        label="Series"
-        controlId="series"
-        register={register}
-        value={exerciseDetails.series}
-        onChange={e => setExerciseDetails({ ...exerciseDetails, series: e.target.value })}
-      />
-      <CustomFormInput
-        label="Repeticiones"
-        controlId="repeticiones"
-        register={register}
-        value={exerciseDetails.repeticiones}
-        onChange={e => setExerciseDetails({ ...exerciseDetails, repeticiones: e.target.value })}
-      />
-      <CustomFormInput
-        label="Tiempo de Descanso (segundos)"
-        controlId="tiempo_descanso"
-        register={register}
-        value={exerciseDetails.tiempo_descanso}
-        onChange={e => setExerciseDetails({ ...exerciseDetails, tiempo_descanso: e.target.value })}
-      />
-      <CustomFormInput
-        label="Explicación / Observaciones"
-        controlId="explicacion"
-        register={register}
-        value={exerciseDetails.explicacion}
-        onChange={e => setExerciseDetails({ ...exerciseDetails, explicacion: e.target.value })}
-      />
-      <Button onClick={addExerciseToRoutine}>Agregar Ejercicio</Button>
+      {(mode === 'A' || mode === 'M' || mode === 'C') && (
+        <>
+          <h3>
+            {mode === 'A' ? 'Crear Rutina' : mode === 'M' ? 'Modificar Rutina' : 'Consultar Rutina'}
+          </h3>
+          <Form onSubmit={handleSubmit(onSubmitRoutine)}>
+            <CustomFormInput
+              label="Nombre de la Rutina"
+              controlId="nombre_rutina"
+              register={register}
+              errors={errors.nombre_rutina}
+            />
+            <CustomFormInput
+              label="Descripción"
+              controlId="descripcion"
+              register={register}
+              errors={errors.descripcion}
+            />
+            
+            {/* Agregar sección para seleccionar ejercicios y sus detalles */}
+            <h4 className="text-center">Detalle de la rutina</h4>
+            <CustomFormSelect
+              label="Ejercicio"
+              controlId="selectedExercise"
+              register={register}
+              options={exercises} // Las opciones deben provenir del fetchExercises
+              value={selectedExercise}
+              onChange={e => setSelectedExercise(exercises.find(ex => ex.id === e.target.value))}
+            />
+            <CustomFormInput
+              label="Series"
+              controlId="series"
+              register={register}
+              value={exerciseDetails.series}
+              onChange={e => setExerciseDetails({ ...exerciseDetails, series: e.target.value })}
+            />
+            <CustomFormInput
+              label="Repeticiones"
+              controlId="repeticiones"
+              register={register}
+              value={exerciseDetails.repeticiones}
+              onChange={e => setExerciseDetails({ ...exerciseDetails, repeticiones: e.target.value })}
+            />
+            <CustomFormInput
+              label="Tiempo de Descanso (segundos)"
+              controlId="tiempo_descanso"
+              register={register}
+              value={exerciseDetails.tiempo_descanso}
+              onChange={e => setExerciseDetails({ ...exerciseDetails, tiempo_descanso: e.target.value })}
+            />
+            <CustomFormInput
+              label="Explicación / Observaciones"
+              controlId="explicacion"
+              register={register}
+              value={exerciseDetails.explicacion}
+              onChange={e => setExerciseDetails({ ...exerciseDetails, explicacion: e.target.value })}
+            />
+            <Button onClick={addExerciseToRoutine}>Agregar Ejercicio</Button>
 
-      {/* Lista de ejercicios añadidos */}
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Ejercicio</th>
-            <th>Series</th>
-            <th>Repeticiones</th>
-            <th>Descanso</th>
-            <th>Observaciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {routines?.ejercicios?.map((ejercicio, index) => (
-            <tr key={index}>
-              <td>{ejercicio.nombre}</td>
-              <td>{ejercicio.series}</td>
-              <td>{ejercicio.repeticiones}</td>
-              <td>{ejercicio.tiempo_descanso}</td>
-              <td>{ejercicio.explicacion}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-      
-      <Button variant="primary" type="submit">Guardar Rutina</Button>
-      <Button variant="secondary" onClick={handleBack}>Cancelar</Button>
-    </Form>
-  </>
-)}
-
+            {/* Lista de ejercicios añadidos */}
+            <Table striped bordered hover variant="dark" className="custom-border mt-3" responsive>
+              <thead>
+                <tr>
+                  <th>Ejercicio</th>
+                  <th>Series</th>
+                  <th>Repeticiones</th>
+                  <th>Descanso</th>
+                  <th>Observaciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {routines?.ejercicios?.map((ejercicio, index) => (
+                  <tr key={index}>
+                    <td>{ejercicio.nombre}</td>
+                    <td>{ejercicio.series}</td>
+                    <td>{ejercicio.repeticiones}</td>
+                    <td>{ejercicio.tiempo_descanso}</td>
+                    <td>{ejercicio.explicacion}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+            
+            <CustomButtonsGroup 
+              mode={mode} 
+              isSubmitting={isLoading} 
+              handleBack={handleBack} 
+            />
+          </Form>
+        </>
+      )}
 
       {/* Modo crear ejercicio */}
       {mode === 'E' && (

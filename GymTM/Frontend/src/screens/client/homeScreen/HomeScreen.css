@@ -1,16 +1,21 @@
-.home-screen {
-  background: linear-gradient(135deg, #1c1c1c, #282828);
-  min-height: 100vh;
-}
-
+/* Estilos generales */
 .welcome-section h1 {
   color: #f1c40f;
   font-weight: bold;
+  font-size: 2.5rem; /* Tamaño para desktop */
+  word-wrap: break-word; /* Permitir que el texto se ajuste */
+}
+
+.welcome-section p {
+  font-size: 1.2rem; /* Tamaño para desktop */
+  word-wrap: break-word; /* Permitir que el texto se ajuste */
 }
 
 .services-section .card {
   background-color: #2c3e50;
   border: none;
+  margin: 15px; /* Añadir margen para separación */
+  overflow: hidden; /* Evitar que el contenido se salga */
 }
 
 .motivational-section h2 {
@@ -21,4 +26,27 @@
 .motivational-section p {
   color: #bdc3c7;
   font-style: italic;
+}
+
+/* Media Queries para móviles */
+@media (max-width: 768px) {
+  .welcome-section h1 {
+    font-size: 1.8rem; /* Tamaño más pequeño para móviles */
+  }
+
+  .welcome-section p {
+    font-size: 1rem; /* Tamaño más pequeño para móviles */
+  }
+
+  .services-section .card {
+    margin: 10px 0; /* Ajustar el margen para móviles */
+  }
+
+  .motivational-section h2 {
+    font-size: 1.5rem; /* Tamaño más pequeño para móviles */
+  }
+
+  .motivational-section p {
+    font-size: 0.9rem; /* Tamaño más pequeño para móviles */
+  }
 }

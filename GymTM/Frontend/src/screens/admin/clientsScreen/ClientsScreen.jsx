@@ -13,6 +13,7 @@ import CustomButtonsGroup from '../../../components/customButtonsGroup/CustomBut
 import CustomDateTimePicker from '../../../components/customDateTimePicker/CustomDateTimePicker';
 import { calcularEdad } from '../../../utils/helper';
 import { getUserData } from '../../../services/authService';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 
 const ClientsScreen = () => {
   const [mode, setMode] = useState('L'); // Modo inicial: Lista
@@ -20,6 +21,7 @@ const ClientsScreen = () => {
   const [filteredClients, setFilteredClients] = useState([]); // Clientes filtrados por búsqueda
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState(null);
+  const isMobile = useIsMobile();
   
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
@@ -140,8 +142,8 @@ const ClientsScreen = () => {
         <>
           <h3 className="text-center">Lista de Clientes</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <Form.Control className="bg-obscure custom-border text-white w-35" type="text" placeholder="Buscar por DNI" onChange={handleSearch} />
-            {(user?.id_rol === 1 || user?.id_rol === 2) && <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> Agregar</Button>}
+            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar por DNI" onChange={handleSearch} />
+            {(user?.id_rol === 1 || user?.id_rol === 2) && <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Agregar cliente'}</Button>}
           </div>
           <Table striped bordered hover variant="dark" className='m-0 custom-border' responsive>
             <thead>
