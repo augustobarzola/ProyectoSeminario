@@ -57,8 +57,8 @@ const UsersScreen = () => {
       setIsLoading(true);
       try {
         const response = await getData('roles');
-        // Solamente admin o recepcionista, ya que cliente y entrenador tienen sus pantallas
-        setRoles(response?.filter((e) => e.id === 1 || e.id === 2));
+        
+        setRoles(response?.filter((e) => e.id === 1 || e.id === 2 | e.id === 3)); // Solamente admin o recepcionista, ya que cliente y entrenador tienen sus pantallas
       } catch (error) {
         toast.error('Error al obtener roles.');
       } finally {
@@ -111,7 +111,7 @@ const UsersScreen = () => {
   // Guardar usuario (Alta o Modificar)
   const onSubmit = async (data) => {
     setIsLoading(true);
-    console.log(data)
+  
     try {
       if (mode === 'A') {
         await insertData('usuarios', { body: data });

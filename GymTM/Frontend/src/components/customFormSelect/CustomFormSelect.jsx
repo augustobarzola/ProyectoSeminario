@@ -23,7 +23,7 @@ const CustomFormSelect = ({
     <Row className={`${!isRequired && 'mb-2'}`}>
       <Col md={{ span: 2, offset: 2 }} className="d-flex align-items-center">
         <Form.Label htmlFor={controlId} onClick={handleToggle} className={`${isMarkable && 'pointer'}`}>{label} &nbsp;</Form.Label>
-        {!(option === 'C') && <span className="text-danger fs-2">*</span>}
+        {isRequired && <span className="text-danger fs-2">*</span>}
       </Col>
       <Col md={6}>
         <Form.Select

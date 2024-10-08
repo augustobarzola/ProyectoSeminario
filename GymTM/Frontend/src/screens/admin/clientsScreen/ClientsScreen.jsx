@@ -83,7 +83,6 @@ const ClientsScreen = () => {
   // Cambiar a modo Modificar con cliente seleccionado
   const handleEdit = async (id) => {
     const cliente = await getData(`clientes/${id}`);
-
     reset(cliente);
     setMode('M');
   };
@@ -118,7 +117,7 @@ const ClientsScreen = () => {
         await insertData('clientes', { body: data });
         toast.success('Cliente creado exitosamente');
       } else if (mode === 'M') {
-        await updateData('clientes', { id: data.id, body: data });
+        await updateData('clientes', { id: data.id_usuario, body: data });
         toast.success('Cliente actualizado exitosamente');
       }
 

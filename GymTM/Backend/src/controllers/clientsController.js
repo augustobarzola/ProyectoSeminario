@@ -24,7 +24,7 @@ module.exports = {
   getClientById: async (req, res) => {
     try {
       const clientId = req.params.id;
-      const [client] = await db.query('SELECT * FROM usuarios u LEFT JOIN personas p ON p.id_usuario = u.id WHERE u.id = ? AND u.id_rol = 4', [clientId]);
+      const [client] = await db.query('SELECT * FROM usuarios u LEFT JOIN personas p ON p.id_usuario = u.id LEFT JOIN domicilios d ON d.id = p.id_domicilio WHERE u.id = ? AND u.id_rol = 4', [clientId]);
 
       if (client.length === 0) {
         return res.status(404).json({ error: 'Cliente no encontrado.' });

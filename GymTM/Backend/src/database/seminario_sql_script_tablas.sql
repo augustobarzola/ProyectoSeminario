@@ -68,6 +68,17 @@ CREATE TABLE detalles_rutina_ejercicios (
     FOREIGN KEY (id_ejercicio) REFERENCES ejercicios(id)
 );
 
+CREATE TABLE clientes_rutinas (
+    id_cliente INT NOT NULL,
+    id_rutina INT NOT NULL,
+	observaciones TEXT,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE,
+    PRIMARY KEY (id_cliente, id_rutina),
+    FOREIGN KEY (id_cliente) REFERENCES usuarios(id),
+    FOREIGN KEY (id_rutina) REFERENCES rutinas(id)
+);
+
 CREATE TABLE asistencias (
     id_asistencia INT AUTO_INCREMENT PRIMARY KEY,
     id_cliente INT NOT NULL,
@@ -79,9 +90,7 @@ CREATE TABLE asistencias (
 
 CREATE TABLE metodos_pago (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL,
-    fecha_alta DATE NOT NULL,
-    fecha_baja DATE
+    nombre VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE planes_pago (
@@ -96,20 +105,11 @@ CREATE TABLE planes_metodos_pago (
     id_plan_pago INT NOT NULL,
     id_metodo_pago INT NOT NULL,
     precio DECIMAL(10, 2) NOT NULL,
+	fecha_alta DATE NOT NULL,
+    fecha_baja DATE,
     PRIMARY KEY (id_plan_pago, id_metodo_pago),
     FOREIGN KEY (id_plan_pago) REFERENCES planes_pago(id),
     FOREIGN KEY (id_metodo_pago) REFERENCES metodos_pago(id)
-);
-
-CREATE TABLE clientes_rutinas (
-    id_cliente INT NOT NULL,
-    id_rutina INT NOT NULL,
-	observaciones TEXT,
-    fecha_inicio DATE NOT NULL,
-    fecha_fin DATE,
-    PRIMARY KEY (id_cliente, id_rutina),
-    FOREIGN KEY (id_cliente) REFERENCES usuarios(id),
-    FOREIGN KEY (id_rutina) REFERENCES rutinas(id)
 );
 
 CREATE TABLE clientes_planes_pago (
@@ -120,4 +120,16 @@ CREATE TABLE clientes_planes_pago (
     PRIMARY KEY (id_cliente, id_plan_pago),
     FOREIGN KEY (id_cliente) REFERENCES usuarios(id),
     FOREIGN KEY (id_plan_pago) REFERENCES planes_pago(id)
+);
+
+CREATE TABLE pagos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT NOT NULL,
+    id_plan_pago INT NOT NULL,
+    id_metodo_pago INT NOT NULL,
+    fecha_pago DATE NOT NULL,
+    importe DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (id_cliente) REFERENCES usuarios(id),
+    FOREIGN KEY (id_plan_pago) REFERENCES planes_pago(id),
+    FOREIGN KEY (id_metodo_pago) REFERENCES metodos_pago(id)
 );
