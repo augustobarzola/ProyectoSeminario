@@ -29,7 +29,6 @@ module.exports = {
   
       res.json(rutinasFormatted);
     } catch (error) {
-      console.log(error)
       res.status(500).json({ error: 'Error al obtener las rutinas.' });
     }
   },  
@@ -179,21 +178,38 @@ module.exports = {
   deleteRoutine: async (req, res) => {
     const connection = await db.getConnection();
     await connection.beginTransaction();
-
+  
     try {
       const rutinaId = req.params.id;
-
+  
+      // Verificar si la rutina está asociada a algún cliente
+      const [asociaciones] = await connection.query(
+        'SELECT COUNT(*) AS total FROM clientes_rutinas WHERE id_rutina = ?',
+        [rutinaId]
+      );
+  
+      if (asociaciones[0].total > 0) {
+        // Si la rutina está asociada a uno o más clientes, no se elimina
+        await connection.rollback();
+        return res.status(400).json({ error: 'No se puede eliminar la rutina porque está asociada a uno o más clientes.' });
+      }
+  
+      // Eliminar los detalles de la rutina en caso de que no haya asociaciones
       await connection.query('DELETE FROM detalles_rutina_ejercicios WHERE id_rutina = ?', [rutinaId]);
-      await connection.query('DELETE FROM clientes_rutinas WHERE id_rutina = ?', [rutinaId]);
+  
+      // Eliminar la rutina
       await connection.query('DELETE FROM rutinas WHERE id = ?', [rutinaId]);
-
+  
+      // Confirmar la transacción
       await connection.commit();
       res.json({ message: 'Rutina eliminada exitosamente.' });
     } catch (error) {
+      // Si ocurre un error, hacer rollback
       await connection.rollback();
       res.status(500).json({ error: 'Error al eliminar la rutina.' });
     } finally {
+      // Liberar la conexión
       connection.release();
     }
-  }
+  }  
 };

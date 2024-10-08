@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Form, Container } from 'react-bootstrap';
+import { Table, Button, Form, Container, Row } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { getData, insertData, updateData, deleteData } from '../../../services/dataService';
 import toast from 'react-hot-toast';
@@ -14,6 +14,7 @@ import CustomDateTimePicker from '../../../components/customDateTimePicker/Custo
 import { getUserData } from '../../../services/authService';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import CustomButtonsGroup from '../../../components/customButtonsGroup/CustomButtonsGroup';
+import showErrorMessage from '../../../utils/showErrorMessage';
 
 const RoutinesScreen = () => {
   const [mode, setMode] = useState('L'); // Modos: L = Listar, A = Alta, M = Modificar, C = Consultar, Asignar, E = Crear Ejercicio
@@ -58,7 +59,7 @@ const RoutinesScreen = () => {
       const response = await getData('rutinas', { user: user });
       setRoutines(response);
     } catch (error) {
-      toast.error('Error al obtener rutinas.');
+      showErrorMessage('Error al obtener rutinas', error);
     } finally {
       setIsLoading(false);
     }
@@ -70,7 +71,7 @@ const RoutinesScreen = () => {
       const response = await getData('ejercicios');
       setExercises(response);
     } catch (error) {
-      toast.error('Error al obtener ejercicios.');
+      showErrorMessage('Error al obtener ejercicios', error);
     }
   };
 
@@ -88,7 +89,7 @@ const RoutinesScreen = () => {
       reset(routine);
       setMode('M');
     } catch (error) {
-      toast.error('Error al obtener la rutina.');
+      showErrorMessage('Error al obtener la rutina', error);
     }
   };
 
@@ -99,18 +100,21 @@ const RoutinesScreen = () => {
       reset(routine);
       setMode('C');
     } catch (error) {
-      toast.error('Error al obtener la rutina.');
+      showErrorMessage('Error al obtener la rutina', error);
     }
   };
 
-  // Dar de baja/activar
-  const handleToggleStatus = async (id) => {
+  const handleCreateExercise = () => {
+    setMode('E');
+  }
+
+  const handleDelete = async (id) => {
     try {
-      await updateData(`rutinas/toggleStatus`, { id });
-      toast.success('Estado del la rutina actualizada exitosamente.');
-      fetchExercises();
+      await deleteData('rutinas', id);
+      toast.success('Rutina eliminada exitosamente');
+      fetchRoutines(); // Refrescar la lista de rutinas
     } catch (error) {
-      toast.error('Error al actualizar el estado de la rutina.');
+      showErrorMessage('Error al eliminar la rutina', error);
     }
   };
 
@@ -149,7 +153,7 @@ const RoutinesScreen = () => {
       }
       setMode('L');
     } catch (error) {
-      toast.error('Error al guardar la rutina.');
+      showErrorMessage('Error al guardar la rutina', error);
     } finally {
       setIsLoading(false);
     }
@@ -196,7 +200,7 @@ const RoutinesScreen = () => {
                     <ActionButtons 
                       handleConsult={handleConsult} 
                       handleEdit={handleEdit} 
-                      handleToggleStatus={handleToggleStatus} 
+                      handleDelete={handleDelete} 
                       item={routine} 
                     />
                   </td>
@@ -265,8 +269,12 @@ const RoutinesScreen = () => {
               value={exerciseDetails.explicacion}
               onChange={e => setExerciseDetails({ ...exerciseDetails, explicacion: e.target.value })}
             />
-            <Button onClick={addExerciseToRoutine}>Agregar Ejercicio</Button>
-
+            {(mode === 'A' || mode === 'M') && 
+              <div className="d-flex justify-content-center gap-2">
+                <Button onClick={addExerciseToRoutine}><FontAwesomeIcon icon={faPlus} /> Agregar Ejercicio</Button>
+                <Button variant="success" onClick={handleCreateExercise}><FontAwesomeIcon icon={faPlus} /> Crear Ejercicio</Button>
+              </div>
+            }
             {/* Lista de ejercicios añadidos */}
             <Table striped bordered hover variant="dark" className="custom-border mt-3" responsive>
               <thead>
@@ -305,10 +313,10 @@ const RoutinesScreen = () => {
         <>
           <h3>Crear Ejercicio</h3>
           <ExerciseCreationForm 
-            onClose={handleBack} 
+            mode={mode}
+            handleBack={handleBack} 
             onExerciseCreated={fetchExercises} 
           />
-          <Button variant="secondary" onClick={handleBack}>Volver</Button>
         </>
       )}
 

@@ -13,6 +13,7 @@ import CustomButtonsGroup from '../../../components/customButtonsGroup/CustomBut
 import CustomDateTimePicker from '../../../components/customDateTimePicker/CustomDateTimePicker';
 import { getUserData } from '../../../services/authService';
 import { useIsMobile } from '../../../hooks/useIsMobile';
+import showErrorMessage from '../../../utils/showErrorMessage';
 
 const TrainersScreen = () => {
   const [mode, setMode] = useState('L'); // Modo inicial: Lista
@@ -54,7 +55,7 @@ const TrainersScreen = () => {
       setTrainers(response);
       setFilteredTrainers(response);
     } catch (error) {
-      toast.error('Error al obtener entrenadores.');
+      showErrorMessage('Error al obtener entrenadores', error);
     } finally {
       setIsLoading(false);
     }
@@ -101,7 +102,7 @@ const TrainersScreen = () => {
       fetchTrainers();
       handleBack();
     } catch (error) {
-      toast.error('Hubo un error al actualizar el estado del entrenador.');
+      showErrorMessage('Hubo un error al actualizar el estado del entrenador', error);
     }
   };
 
@@ -118,7 +119,7 @@ const TrainersScreen = () => {
       }
       handleBack();
     } catch (error) {
-      toast.error('Error al guardar entrenador.');
+      showErrorMessage('Error al guardar entrenador', error);
     } finally {
       setIsLoading(false);
     }

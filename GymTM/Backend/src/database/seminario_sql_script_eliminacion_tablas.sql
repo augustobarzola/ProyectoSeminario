@@ -1,4 +1,5 @@
 -- Eliminar las tablas que tienen claves foráneas
+DROP TABLE IF EXISTS pagos;
 DROP TABLE IF EXISTS clientes_rutinas;
 DROP TABLE IF EXISTS clientes_planes_pago;
 DROP TABLE IF EXISTS planes_metodos_pago;

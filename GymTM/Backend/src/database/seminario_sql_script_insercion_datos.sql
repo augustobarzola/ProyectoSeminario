@@ -32,8 +32,8 @@ VALUES
 
 INSERT INTO rutinas (nombre_rutina, descripcion, fecha_creacion, id_entrenador)
 VALUES 
-('Rutina Fuerza', 'Rutina enfocada en fuerza para todo el cuerpo', '2024-01-03', 2),
-('Rutina Hipertrofia', 'Rutina enfocada en el desarrollo muscular', '2024-01-04', 2);
+('Rutina Fuerza', 'Rutina enfocada en fuerza para todo el cuerpo', '2024-01-03', 3),
+('Rutina Hipertrofia', 'Rutina enfocada en el desarrollo muscular', '2024-01-04', 3);
 
 INSERT INTO detalles_rutina_ejercicios (id_rutina, id_ejercicio, series, repeticiones, tiempo_descanso, explicacion)
 VALUES 
@@ -48,17 +48,35 @@ VALUES
 INSERT INTO metodos_pago (nombre)
 VALUES 
 ('Efectivo'),
-('Tarjeta de Crédito');
+('Tarjeta de Débito'),
+('Tarjeta de Crédito'),
+('Débito Automático');
 
 INSERT INTO planes_pago (nombre, descripcion, fecha_alta, fecha_baja)
 VALUES 
 ('Plan Mensual', 'Pago mensual para acceso completo', '2024-01-01', NULL),
+('Plan Semestral', 'Pago semestral con descuento', '2024-01-02', NULL),
 ('Plan Anual', 'Pago anual con descuento', '2024-01-01', NULL);
 
 INSERT INTO clientes_rutinas (id_cliente, id_rutina, observaciones, fecha_inicio, fecha_fin)
 VALUES 
-(3, 1, 'Cliente con buena evolución en fuerza', '2024-01-06', NULL);
+(4, 1, 'Cliente con buena evolución en fuerza', '2024-01-06', NULL);
 
 INSERT INTO clientes_planes_pago (id_cliente, id_plan_pago, fecha_inicio, fecha_fin)
 VALUES 
-(3, 1, '2024-01-01', '2024-02-01');
+(4, 1, '2024-01-01', '2024-02-01');
+
+INSERT INTO planes_metodos_pago (id_plan_pago, id_metodo_pago, precio, fecha_alta, fecha_baja)
+VALUES 
+(1, 1, 100.00, '2024-01-01', NULL),  -- Plan Mensual con Efectivo
+(1, 2, 105.00, '2024-01-01', NULL),  -- Plan Mensual con Tarjeta de Crédito
+(2, 1, 1000.00, '2024-01-01', NULL), -- Plan Semestral con Efectivo
+(2, 2, 1100.00, '2024-01-01', NULL), -- Plan Semestral con Tarjeta de Crédito
+(3, 1, 1000.00, '2024-01-01', NULL), -- Plan Anual con Efectivo
+(3, 4, 900.00, '2024-01-02', NULL), -- Plan Anual con Debito Automatico
+(3, 2, 1100.00, '2024-01-01', NULL); -- Plan Anual con Tarjeta de Crédito
+
+INSERT INTO pagos (id_cliente, id_plan_pago, id_metodo_pago, fecha_pago, importe)
+VALUES 
+(4, 1, 1, '2024-01-07', 100.00),  -- Cliente Juan pagó el Plan Mensual en Efectivo
+(4, 2, 2, '2024-01-08', 1100.00); -- Cliente Juan pagó el Plan Anual en Tarjeta de Crédito

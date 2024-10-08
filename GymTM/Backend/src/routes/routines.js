@@ -8,6 +8,7 @@ router.get('/:id', routinesController.getRoutineById);
 router.post('/', routinesController.createRoutine);
 router.post('/asignar/', routinesController.assignRoutineToClient);
 router.put('/:id', routinesController.updateRoutine);
+router.delete('/:id', routinesController.deleteRoutine)
 // router.put('/toggleStatus/:id', routinesController.toggleStatusRoutine);
 
 module.exports = router;

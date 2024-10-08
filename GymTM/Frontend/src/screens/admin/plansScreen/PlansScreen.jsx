@@ -1,26 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Form, Container } from 'react-bootstrap';
+import { Table, Button, Form, Container, Accordion } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { getData, insertData, updateData } from '../../../services/dataService';
 import toast from 'react-hot-toast';
 import CustomSpinner from '../../../components/customSpinner/CustomSpinner';
 import CustomFormInput from '../../../components/customFormInput/CustomFormInput';
-import CustomFormSelect from '../../../components/customFormSelect/CustomFormSelect';
-import ActionButtons from '../../../components/actionButtons/ActionButtons';
 import CustomButtonsGroup from '../../../components/customButtonsGroup/CustomButtonsGroup';
+import ActionButtons from '../../../components/actionButtons/ActionButtons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useIsMobile } from '../../../hooks/useIsMobile';
+import showErrorMessage from '../../../utils/showErrorMessage';
 
 const PlansScreen = () => {
-  const [mode, setMode] = useState('L'); // 'L'ist, 'A'dd, 'M'odify, 'C'onsult
+  const [mode, setMode] = useState('L');
   const [plans, setPlans] = useState([]);
   const [filteredPlans, setFilteredPlans] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [activePlanId, setActivePlanId] = useState(null); // Para manejar la subtabla
   const isMobile = useIsMobile();
-
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
-
+  
   const initialFormState = {
     nombre: '',
     descripcion: '',
@@ -30,13 +29,14 @@ const PlansScreen = () => {
     fecha_baja: '',
   };
 
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+
   useEffect(() => {
     if (mode === 'L') {
       fetchPlans();
     }
   }, [mode]);
 
-  // Obtener planes
   const fetchPlans = async () => {
     setIsLoading(true);
     try {
@@ -44,63 +44,55 @@ const PlansScreen = () => {
       setPlans(response);
       setFilteredPlans(response);
     } catch (error) {
-      toast.error('Error al obtener planes.');
+      showErrorMessage('Error al obtener los planes', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Filtrar planes por nombre
   const handleSearch = (e) => {
     const nombre = e.target.value.toLowerCase();
-    if (nombre) {
-      const results = plans.filter(plan => plan.nombre.toLowerCase().includes(nombre));
-      setFilteredPlans(results);
-    } else {
-      setFilteredPlans(plans);
-    }
+    const results = nombre 
+      ? plans.filter(plan => plan.nombre.toLowerCase().includes(nombre)) 
+      : plans;
+    setFilteredPlans(results);
   };
 
-  // Cambiar a modo Alta
   const handleAddPlan = () => {
     reset(initialFormState);
     setMode('A');
   };
 
-  // Cambiar a modo Modificar
   const handleEdit = async (id) => {
     try {
       const plan = await getData(`planes/${id}`);
       reset(plan);
       setMode('M');
     } catch (error) {
-      toast.error('Error al obtener el plan.');
+      showErrorMessage('Error al obtener el plan', error);
     }
   };
 
-  // Cambiar a modo Consultar
   const handleConsult = async (id) => {
     try {
       const plan = await getData(`planes/${id}`);
       reset(plan);
       setMode('C');
     } catch (error) {
-      toast.error('Error al obtener el plan.');
+      showErrorMessage('Error al obtener el plan', error);
     }
   };
 
-  // Dar de baja/activar plan
   const handleToggleStatus = async (id) => {
     try {
       await updateData(`planes/toggleStatus`, { id });
       toast.success('Estado del plan actualizado exitosamente.');
       fetchPlans();
     } catch (error) {
-      toast.error('Error al actualizar el estado del plan.');
+      showErrorMessage('Error al actualizar el estado del plan', error);
     }
   };
 
-  // Guardar plan (Alta o Modificar)
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
@@ -113,7 +105,7 @@ const PlansScreen = () => {
       }
       handleBack();
     } catch (error) {
-      toast.error('Error al guardar el plan.');
+      showErrorMessage('Error al guardar el plan', error);
     } finally {
       setIsLoading(false);
     }
@@ -122,6 +114,11 @@ const PlansScreen = () => {
   const handleBack = () => {
     setMode('L');
     reset(initialFormState);
+  };
+
+  // Manejar la visualización de la subtabla
+  const toggleSubTable = (id) => {
+    setActivePlanId(activePlanId === id ? null : id);
   };
 
   return (
@@ -143,31 +140,67 @@ const PlansScreen = () => {
               <tr>
                 <th>Nombre</th>
                 <th>Descripción</th>
-                <th>Método de Pago</th>
-                <th>Importe</th>
                 <th>Fecha Alta</th>
                 <th>Fecha Baja</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {filteredPlans?.map(plan => (
-                <tr key={plan.id}>
-                  <td>{plan.nombre}</td>
-                  <td>{plan.descripcion}</td>
-                  <td>{plan.metodo_pago}</td>
-                  <td>{plan.importe}</td>
-                  <td>{plan.fecha_alta}</td>
-                  <td>{plan.fecha_baja}</td>
-                  <td className="col-1 text-center">
-                    <ActionButtons 
-                      handleConsult={handleConsult} 
-                      handleEdit={handleEdit} 
-                      handleToggleStatus={handleToggleStatus} 
-                      item={plan} 
-                    />
-                  </td>
-                </tr>
+              {filteredPlans.map(plan => (
+                <React.Fragment key={plan.id}>
+                  <tr>
+                    <td>{plan.nombre}</td>
+                    <td>{plan.descripcion}</td>
+                    <td>{plan.fecha_alta}</td>
+                    <td>{plan.fecha_baja}</td>
+                    <td className="col-1 text-center">
+                      <ActionButtons 
+                        handleConsult={handleConsult} 
+                        handleEdit={handleEdit} 
+                        handleToggleStatus={handleToggleStatus} 
+                        item={plan} 
+                      />
+                    </td>
+                  </tr>
+                    <tr>
+                      <td colSpan="5">
+                        <Table striped bordered hover variant="info" className='m-0 custom-border' responsive>
+                          <thead>
+                            <tr>
+                              <th>Método de Pago</th>
+                              <th>Importe</th>
+                              <th>Fecha Alta</th>
+                              <th>Fecha Baja</th>
+                              <th>Acciones</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {plan.metodos_pago.map(metodo => (
+                              <tr key={metodo.id}>
+                                <td>{metodo.nombre}</td>
+                                <td>{metodo.precio}</td>
+                                <td>{plan.fecha_alta}</td>
+                                <td>{plan.fecha_baja}</td>
+                                <td className="col-1 text-center">
+                                  <ActionButtons 
+                                    handleConsult={handleConsult} 
+                                    handleEdit={handleEdit} 
+                                    handleToggleStatus={handleToggleStatus} 
+                                    item={metodo} 
+                                    buttonVisibility = {{
+                                      consult: false,
+                                      edit: true,
+                                      toggleStatus: true,
+                                    }}
+                                  />
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </Table>
+                      </td>
+                    </tr>
+                </React.Fragment>
               ))}
             </tbody>
           </Table>
@@ -195,47 +228,30 @@ const PlansScreen = () => {
               option={mode}
               required={false}
             />
-            <CustomFormSelect
-              label="Método de Pago"
-              controlId="metodo_pago"
-              register={register}
-              errors={errors.metodo_pago}
-              options={[
-                { id: 'efectivo', name: 'Efectivo' },
-                { id: 'transferencia', name: 'Transferencia' },
-                { id: 'tarjetaDebito', name: 'Tarjeta de Débito' },
-                { id: 'tarjetaCredito', name: 'Tarjeta de Crédito' },
-                { id: 'debitoAutomatico', name: 'Débito Automático' },
-              ]}
-              option={mode}
-            />
-            <CustomFormInput
-              label="Importe"
-              controlId="importe"
-              type="number"
-              register={register}
-              errors={errors.importe}
-              option={mode}
-            />
-            <CustomFormInput
-              label="Fecha de Alta"
-              controlId="fecha_alta"
-              type="date"
-              register={register}
-              errors={errors.fecha_alta}
-              option={mode}
-              required={false}
-            />
-            <CustomFormInput
-              label="Fecha de Baja"
-              controlId="fecha_baja"
-              type="date"
-              register={register}
-              errors={errors.fecha_baja}
-              option={mode}
-              required={false}
-            />
-
+            {mode !== 'A' && (
+              <>
+                <CustomFormInput
+                  label="Fecha de Alta"
+                  controlId="fecha_alta"
+                  register={register}
+                  errors={register.fecha_alta}
+                  mode={mode}
+                  disabled={true}
+                  required={false}
+                  extra={<i className="fa-solid fa-calendar-days"></i>}
+                />
+                <CustomFormInput
+                  label="Fecha de Baja"
+                  controlId="fecha_baja"
+                  register={register}
+                  errors={register.fecha_baja}
+                  mode={mode}
+                  disabled={true}
+                  required={false}
+                  extra={<i className="fa-solid fa-calendar-days"></i>}
+                />      
+              </>
+            )}
             <CustomButtonsGroup 
               mode={mode} 
               isSubmitting={isLoading} 

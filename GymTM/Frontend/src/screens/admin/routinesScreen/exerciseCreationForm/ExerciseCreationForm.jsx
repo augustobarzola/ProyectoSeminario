@@ -5,8 +5,10 @@ import { getData, insertData } from '../../../../services/dataService';
 import toast from 'react-hot-toast';
 import CustomSpinner from '../../../../components/customSpinner/CustomSpinner';
 import CustomFormInput from '../../../../components/customFormInput/CustomFormInput';
+import CustomButtonsGroup from '../../../../components/customButtonsGroup/CustomButtonsGroup';
+import showErrorMessage from '../../../../utils/showErrorMessage';
 
-const ExerciseCreationForm = () => {
+const ExerciseCreationForm = ({mode, handleBack, onExerciseCreated }) => {
   const [exercises, setExercises] = useState([]); // Lista de ejercicios
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,7 +29,7 @@ const ExerciseCreationForm = () => {
       const response = await getData('ejercicios'); // Aquí llamas a tu endpoint que trae los ejercicios
       setExercises(response);
     } catch (error) {
-      toast.error('Error al obtener ejercicios.');
+      showErrorMessage('Error al obtener ejercicios', error);
     } finally {
       setIsLoading(false);
     }
@@ -42,7 +44,7 @@ const ExerciseCreationForm = () => {
       reset(initialExerciseFormState); // Reiniciar el formulario después de crear
       fetchExercises(); // Refrescar la lista de ejercicios
     } catch (error) {
-      toast.error('Error al crear el ejercicio.');
+      showErrorMessage('Error al crear el ejercicio', error);
     } finally {
       setIsLoading(false);
     }
@@ -67,9 +69,11 @@ const ExerciseCreationForm = () => {
           placeholder="Ingrese una breve descripción del ejercicio"
           as="textarea" // Cambiar a textarea para la descripción
         />
-        <div className="d-flex justify-content-center mt-4">
-          <Button variant="primary" type="submit">Guardar Ejercicio</Button>
-        </div>
+        <CustomButtonsGroup 
+          mode={mode} 
+          isSubmitting={isLoading} 
+          handleBack={handleBack} 
+        />
       </Form>
 
       <h3 className="text-center mt-5">Listado de Ejercicios</h3>

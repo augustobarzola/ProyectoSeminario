@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import CustomButtonsGroup from '../../../components/customButtonsGroup/CustomButtonsGroup';
 import { useIsMobile } from '../../../hooks/useIsMobile';
+import showErrorMessage from '../../../utils/showErrorMessage';
 
 const UsersScreen = () => {
   const [mode, setMode] = useState('L'); // Modo inicial: Lista
@@ -48,7 +49,7 @@ const UsersScreen = () => {
       setUsers(response);
       setFilteredUsers(response);
     } catch (error) {
-      toast.error('Error al obtener usuarios.');
+      showErrorMessage('Error al obtener usuarios', error);
     } finally {
       setIsLoading(false);
     }
@@ -62,7 +63,7 @@ const UsersScreen = () => {
         
         setRoles(response?.filter((e) => e.id === 1 || e.id === 2 | e.id === 3)); // Solamente admin o recepcionista, ya que cliente y entrenador tienen sus pantallas
       } catch (error) {
-        toast.error('Error al obtener roles.');
+        showErrorMessage('Error al obtener roles', error);
       } finally {
         setIsLoading(false);
       }
@@ -106,7 +107,7 @@ const UsersScreen = () => {
       toast.success("Estado del usuario actualizado exitosamente!");
       fetchUsers();
     } catch (error) {
-      toast.error('Hubo un error al actualizar el estado del usuario.');
+      showErrorMessage('Hubo un error al actualizar el estado del usuario.', error);
     }
   };
 
@@ -124,8 +125,7 @@ const UsersScreen = () => {
       }
       handleBack();
     } catch (error) {
-      let mensaje = error.response?.data?.message?.toLowerCase().includes('dni') ? error.response?.data?.message : '';
-      toast.error('Error al guardar usuario. ' + mensaje);
+      showErrorMessage('Error al guardar usuario', error);
     } finally {
       setIsLoading(false);
     }

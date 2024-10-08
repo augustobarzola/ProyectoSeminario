@@ -10,6 +10,7 @@ import CustomFormInputPassword from '../../components/customFormInputPassword/Cu
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { useIsMobile } from '../../hooks/useIsMobile';
+import showErrorMessage from '../../utils/showErrorMessage';
 
 const PerfilScreen = () => {
   const [mode, setMode] = useState('C'); // Modo inicial: Consulta
@@ -40,7 +41,7 @@ const PerfilScreen = () => {
       setUserData(response);
       reset(response);
     } catch (error) {
-      toast.error('Error al obtener datos del usuario.');
+      showErrorMessage('Error al obtener datos del usuario', error);
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +68,7 @@ const PerfilScreen = () => {
 
       handleBack();
     } catch (error) {
-      toast.error('Error al actualizar la contraseña.');
+      showErrorMessage('Error al actualizar la contraseña', error);
     } finally {
       setIsLoading(false);
     }

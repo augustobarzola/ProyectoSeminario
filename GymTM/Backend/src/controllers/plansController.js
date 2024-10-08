@@ -6,8 +6,19 @@ module.exports = {
     try {
       const [planes] = await db.query('SELECT * FROM planes_pago');
 
+      // Crear un array para almacenar los usuarios con sus datos asociados
+      const planesWithMetodosPago = await Promise.all(planes.map(async (plan) => {
+        // Obtener datos adicionales 
+        const [planesMetodosPago] = await db.query('SELECT * FROM planes_metodos_pago p JOIN metodos_pago m ON p.id_metodo_pago = m.id WHERE id_plan_pago = ?', [plan.id]);
+
+        return {
+          ...plan, // Datos del plan
+          metodos_pago: planesMetodosPago, // Agrega detalles 
+        };
+      }));
+
       // Convertir fechas a formato dd/mm/yyyy antes de devolver
-      const planesFormatted = planes.map(plane => ({
+      const planesFormatted = planesWithMetodosPago.map(plane => ({
         ...plane,
         fecha_alta: convertToDisplayDate(plane.fecha_alta),
         fecha_baja: plane.fecha_baja ? convertToDisplayDate(plane.fecha_baja) : null,
@@ -22,31 +33,44 @@ module.exports = {
   getPlanById: async (req, res) => {
     try {
       const planId = req.params.id;
+  
+      // Obtener el plan específico
       const [plan] = await db.query('SELECT * FROM planes_pago WHERE id = ?', [planId]);
-
+  
       if (plan.length === 0) {
         return res.status(404).json({ error: 'Plan de pago no encontrado.' });
       }
-
+  
+      // Obtener los métodos de pago asociados al plan
+      const [planesMetodosPago] = await db.query(
+        'SELECT pm.*, m.nombre AS metodo_nombre FROM planes_metodos_pago pm JOIN metodos_pago m ON pm.id_metodo_pago = m.id WHERE id_plan_pago = ?',
+        [planId]
+      );
+  
       // Convertir fechas a formato dd/mm/yyyy antes de devolver
       const planFormatted = {
-        ...plan[0],
+        ...plan[0], // Detalles del plan
         fecha_alta: convertToDisplayDate(plan[0].fecha_alta),
         fecha_baja: plan[0].fecha_baja ? convertToDisplayDate(plan[0].fecha_baja) : null,
+        metodos_pago: planesMetodosPago.map(method => ({
+          ...method,
+          fecha_alta: convertToDisplayDate(method.fecha_alta), // Si hay fecha de alta en métodos
+        })),
       };
-
+  
       res.json(planFormatted);
     } catch (error) {
+      console.error(error); // Para depurar el error
       res.status(500).json({ error: 'Error al obtener el plan de pago.' });
     }
-  },
+  },  
 
   createPlan: async (req, res) => {
     const connection = await db.getConnection();
     await connection.beginTransaction();
 
     try {
-      const { nombre, descripcion } = req.body;
+      const { nombre, descripcion, metodos_pago } = req.body;
 
       // Validar campos obligatorios
       if (!nombre) {
@@ -59,9 +83,20 @@ module.exports = {
         [nombre, descripcion]
       );
 
+      // Insertar métodos de pago asociados al plan
+      if (metodos_pago && metodos_pago.length > 0) {
+        const methodQueries = metodos_pago.map(method => {
+          return connection.query(
+            'INSERT INTO metodos_pago (id_plan, metodo, importe, fecha_alta) VALUES (?, ?, ?, CURDATE())',
+            [result.insertId, method.metodo, method.importe]
+          );
+        });
+        await Promise.all(methodQueries);
+      }
+
       await connection.commit();
       res.json({ message: 'Plan de pago creado exitosamente.', id: result.insertId });
-      
+
     } catch (error) {
       await connection.rollback();
       console.error(error);
@@ -121,6 +156,34 @@ module.exports = {
       await connection.rollback();
       console.error(error);
       res.status(500).json({ error: 'Error al actualizar el estado del plan de pago.' });
+    } finally {
+      connection.release();
+    }
+  },
+
+  // Nueva función para dar de alta métodos de pago
+  createPaymentMethod: async (req, res) => {
+    const connection = await db.getConnection();
+    await connection.beginTransaction();
+
+    try {
+      const { id_plan, metodo, importe } = req.body;
+
+      if (!id_plan || !metodo || !importe) {
+        return res.status(400).json({ error: 'Faltan campos obligatorios.' });
+      }
+
+      await connection.query(
+        'INSERT INTO metodos_pago (id_plan, metodo, importe, fecha_alta) VALUES (?, ?, ?, CURDATE())',
+        [id_plan, metodo, importe]
+      );
+
+      await connection.commit();
+      res.json({ message: 'Método de pago creado exitosamente.' });
+    } catch (error) {
+      await connection.rollback();
+      console.error(error);
+      res.status(500).json({ error: 'Error al crear el método de pago.' });
     } finally {
       connection.release();
     }

@@ -14,6 +14,7 @@ import CustomDateTimePicker from '../../../components/customDateTimePicker/Custo
 import { calcularEdad } from '../../../utils/helper';
 import { getUserData } from '../../../services/authService';
 import { useIsMobile } from '../../../hooks/useIsMobile';
+import showErrorMessage from '../../../utils/showErrorMessage';
 
 const ClientsScreen = () => {
   const [mode, setMode] = useState('L'); // Modo inicial: Lista
@@ -59,7 +60,7 @@ const ClientsScreen = () => {
       setClients(response);
       setFilteredClients(response);
     } catch (error) {
-      toast.error('Error al obtener clientes.');
+      showErrorMessage('Error al obtener clientes', error);
     } finally {
       setIsLoading(false);
     }
@@ -106,7 +107,7 @@ const ClientsScreen = () => {
       fetchClients();
       handleBack();
     } catch (error) {
-      toast.error('Hubo un error al actualizar el estado del cliente.');
+      showErrorMessage('Hubo un error al actualizar el estado del cliente', error);
     }
   };
 
@@ -125,7 +126,7 @@ const ClientsScreen = () => {
 
       handleBack();
     } catch (error) {
-      toast.error('Error al guardar cliente.');
+      showErrorMessage('Error al guardar cliente', error);
     } finally {
       setIsLoading(false);
     }

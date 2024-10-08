@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import CustomSpinner from '../../../components/customSpinner/CustomSpinner';
 import CustomFormInput from '../../../components/customFormInput/CustomFormInput';
 import ActionButtons from '../../../components/actionButtons/ActionButtons';
+import showErrorMessage from '../../../utils/showErrorMessage';
 
 const AsistenciasScreen = () => {
   const [asistencias, setAsistencias] = useState([]); // Lista de asistencias
@@ -25,7 +26,7 @@ const AsistenciasScreen = () => {
       const response = await getData('asistencias');
       setAsistencias(response);
     } catch (error) {
-      toast.error('Error al obtener asistencias.');
+      showErrorMessage('Error al obtener asistencias', error);
     } finally {
       setIsLoading(false);
     }
@@ -39,8 +40,7 @@ const AsistenciasScreen = () => {
       fetchAsistencias(); // Refrescar la lista de asistencias
       reset(initialFormState);
     } catch (error) {
-      let mensaje = error.response?.data?.error?.toLowerCase().includes('cliente') ? error.response?.data?.error : '';
-      toast.error('Error al registrar la asistencia. '+mensaje);
+      showErrorMessage('Error al registrar la asistencia', error);
     }
   };
 
@@ -51,7 +51,7 @@ const AsistenciasScreen = () => {
       fetchAsistencias(); // Refrescar la lista de asistencias
       reset(initialFormState);
     } catch (error) {
-      toast.error('Error al eliminar la asistencia.');
+      showErrorMessage('Error al eliminar la asistencia', error);
     }
   };
 

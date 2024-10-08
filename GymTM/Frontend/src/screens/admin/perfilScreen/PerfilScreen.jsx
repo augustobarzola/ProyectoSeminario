@@ -28,7 +28,7 @@ const PerfilScreen = () => {
       setUserData(response);
       reset(response);
     } catch (error) {
-      toast.error('Error al obtener datos del usuario.');
+      showErrorMessage('Error al obtener datos del usuario', error);
     } finally {
       setIsLoading(false);
     }
@@ -40,7 +40,7 @@ const PerfilScreen = () => {
       await updateData(`usuarios/updatePassword/${userData.id}`, { contrasenia: data.contrasenia });
       toast.success('Contraseña actualizada exitosamente.');
     } catch (error) {
-      toast.error('Error al actualizar la contraseña.');
+      showErrorMessage('Error al actualizar la contraseña', error);
     } finally {
       setIsLoading(false);
     }
