@@ -24,9 +24,10 @@ const UsersScreen = () => {
     nombre: '',
     apellido: '',
     dni: '',
+    sexo: '',
     correo: '',
-    rol: '',
-    estado: true
+    telefono: '',
+    id_rol: ''
   };
 
   useEffect(() => {
@@ -56,7 +57,8 @@ const UsersScreen = () => {
       setIsLoading(true);
       try {
         const response = await getData('roles');
-        setRoles(response);
+        // Solamente admin o recepcionista, ya que cliente y entrenador tienen sus pantallas
+        setRoles(response?.filter((e) => e.id === 1 || e.id === 2));
       } catch (error) {
         toast.error('Error al obtener roles.');
       } finally {
@@ -119,7 +121,8 @@ const UsersScreen = () => {
       }
       handleBack();
     } catch (error) {
-      toast.error('Error al guardar usuario.');
+      let mensaje = error.response?.data?.message?.toLowerCase().includes('dni') ? error.response?.data?.message : '';
+      toast.error('Error al guardar usuario. ' + mensaje);
     } finally {
       setIsLoading(false);
     }
@@ -205,6 +208,18 @@ const UsersScreen = () => {
               option={mode}
               disabled={mode === 'M'}
             />
+            <CustomFormSelect
+              label="Sexo"
+              controlId="sexo"
+              register={register}
+              errors={errors.sexo}
+              options={[
+                { id: 1, name: 'Masculino' },
+                { id: 2, name: 'Femenino' },
+                { id: 3, name: 'Otro' },
+              ]}
+              option={mode}
+            />
             <CustomFormInput
               label="Correo"
               controlId="correo"
@@ -224,11 +239,12 @@ const UsersScreen = () => {
             />
             <CustomFormSelect
               label="Rol"
-              controlId="rol"
+              controlId="id_rol"
               register={register}
-              errors={errors.rol}
+              errors={errors.id_rol}
               options={roles}
               option={mode}
+              valueReturn="id"
             />
             {mode !== 'A' && (
               <>

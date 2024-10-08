@@ -49,7 +49,7 @@ module.exports = {
     await connection.beginTransaction();
 
     try {
-      const { nombre, apellido, dni, sexo, fecha_nacimiento, calle, numero, ciudad, provincia, codigo_postal, pais, correo, telefono } = req.body;
+      const { nombre, apellido, dni, sexo, fecha_nacimiento, calle, numero, ciudad, provincia, codigo_postal, pais, correo, telefono, especialidad } = req.body;
 
       // Validar campos obligatorios
       if (!nombre || !apellido || !dni || !sexo) {
@@ -60,7 +60,7 @@ module.exports = {
       const fechaNacimientoISO = fecha_nacimiento ? convertToISODate(fecha_nacimiento) : null;
 
       // 1. Insertar usuario a través del controlador de usuarios
-      const id_usuario = await usersController.createUserLogic(dni, dni, 3);
+      const id_usuario = await usersController.createUserLogic(dni, dni, 3, dni, sexo, nombre, apellido, correo, telefono, especialidad);
 
       let id_domicilio;
 
@@ -75,7 +75,7 @@ module.exports = {
 
       // 3. Insertar entrenador
       await connection.query(
-        'INSERT INTO personas (id_usuario, dni, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono, fecha_alta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE())',
+        'INSERT INTO personas (id_usuario, dni, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
         [id_usuario, dni, sexo, nombre, apellido, fechaNacimientoISO, id_domicilio, correo, telefono]
       );
 
@@ -97,7 +97,7 @@ module.exports = {
 
     try {
       const trainerId = req.params.id;
-      const { nombre, apellido, sexo, fecha_nacimiento, calle, numero, ciudad, provincia, codigo_postal, pais, correo, telefono } = req.body;
+      const { nombre, apellido, sexo, fecha_nacimiento, calle, numero, ciudad, provincia, codigo_postal, pais, correo, telefono, especialidad } = req.body;
 
       if (!trainerId) {
         return res.status(400).json({ error: 'El campo "id" es obligatorio.' });
@@ -105,6 +105,12 @@ module.exports = {
 
       // Convertir fecha de nacimiento a formato ISO
       const fechaNacimientoISO = fecha_nacimiento ? convertToISODate(fecha_nacimiento) : null;
+
+      // 1. Actualizar usuario
+      await connection.query(
+        'UPDATE usuarios SET especialidad = ? WHERE id = ?',
+        [especialidad, trainerId]
+      );
 
       let id_domicilio;
 
@@ -145,9 +151,6 @@ module.exports = {
       if (!trainerId) {
         return res.status(400).json({ error: 'El campo "id" es obligatorio.' });
       }
-
-      // Cambiar el estado del entrenador
-      await connection.query('UPDATE usuarios SET fecha_baja = IF(fecha_baja IS NULL, CURDATE(), NULL) WHERE id = ? AND u.id_rol = 3', [trainerId]);
 
       // Cambiar el estado del usuario a través del controlador de usuarios
       await usersController.toggleUserStatusLogic(trainerId);

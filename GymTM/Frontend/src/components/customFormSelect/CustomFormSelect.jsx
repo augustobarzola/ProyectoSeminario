@@ -11,7 +11,8 @@ const CustomFormSelect = ({
   errors,
   option,
   required = true,
-  disabled
+  disabled,
+  valueReturn = 'name'
 }) => {
   const { isOpen, handleToggle } = useToggleSelect(controlId);
 
@@ -43,7 +44,7 @@ const CustomFormSelect = ({
           className={`bg-obscure text-white custom-border custom-select ${isOpen && 'open'}`}
         >
           {options.map((opt) => (
-            <option key={opt.id} value={opt.name || opt.nombre}>
+            <option key={opt.id} value={valueReturn === 'id' ? opt.id : opt.name || opt.nombre}>
               {opt.name || opt.nombre}
             </option>
           ))}

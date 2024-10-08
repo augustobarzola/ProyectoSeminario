@@ -4,15 +4,25 @@ const { convertToISODate, convertToDisplayDate } = require('../helpers/utils');
 
 module.exports = {
   getUserAndValidatePassword: async (usuario, password) => {
-    const [rows] = await db.query(`SELECT u.*, CONCAT(p.nombre, ', ', p.apellido) AS nombre_completo, r.nombre as rol 
-      FROM usuarios u LEFT JOIN personas p ON u.id = p.id_usuario LEFT JOIN roles r ON r.id = u.id_rol
-       WHERE u.usuario = ? AND u.fecha_baja IS NULL`, [usuario]);
+    // Consultar al usuario, incluso si está dado de baja
+    const [rows] = await db.query(`SELECT u.*, CONCAT(p.nombre, ', ', p.apellido) AS nombre_completo, r.nombre as rol, u.fecha_baja 
+      FROM usuarios u 
+      LEFT JOIN personas p ON u.id = p.id_usuario 
+      LEFT JOIN roles r ON r.id = u.id_rol
+      WHERE u.usuario = ?`, [usuario]);
 
     if (rows.length === 0) {
       throw new Error('Usuario/contraseña incorrectos');
     }
 
     const usuarioEncontrado = rows[0];
+
+    // Verificar si el usuario está dado de baja
+    if (usuarioEncontrado.fecha_baja !== null) {
+      throw new Error('Usuario dado de baja');
+    }
+
+    // Comparar la contraseña solo si el usuario no está dado de baja
     const match = await bcrypt.compare(password.toString(), usuarioEncontrado.contrasenia);
 
     if (!match) {
@@ -23,8 +33,8 @@ module.exports = {
   },
 
   // Mover la lógica de creación a una función aparte
-  createUserLogic: async (usuario, password, id_rol, dni, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono) => {
-    if (!usuario || !password || !id_rol || !dni || !nombre || !apellido || !correo) {
+  createUserLogic: async (usuario, password, id_rol, dni, sexo, nombre, apellido, correo, telefono, especialidad = null) => {
+    if (!usuario || !password || !id_rol || !dni || !nombre || !apellido) {
       throw new Error('Faltan campos obligatorios.');
     }
 
@@ -37,26 +47,32 @@ module.exports = {
     try {
       // Insertar el usuario en la tabla `usuarios`
       const [userResult] = await connection.query(
-        'INSERT INTO usuarios (usuario, contrasenia, id_rol, fecha_alta) VALUES (?, ?, ?, CURDATE())',
-        [usuario, hashedPassword, id_rol]
+        'INSERT INTO usuarios (usuario, contrasenia, id_rol, especialidad, fecha_alta) VALUES (?, ?, ?, ?, CURDATE())',
+        [usuario, hashedPassword, id_rol, especialidad]
       );
       const id_usuario = userResult.insertId; // ID del usuario creado
 
-      // Convertir la fecha de nacimiento a formato ISO si es necesario
-      const fechaNacimientoISO = new Date(fecha_nacimiento).toISOString().split('T')[0];
-
-      // Insertar la persona relacionada en la tabla `personas`
-      await connection.query(
-        'INSERT INTO personas (id_usuario, dni, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono, fecha_alta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE())',
-        [id_usuario, dni, sexo, nombre, apellido, fechaNacimientoISO, id_domicilio, correo, telefono]
-      );
-
+      // Solamente para administrador o recepcionista ya que los otros tienen su controlador que crea a la persona
+      if (id_rol === 1 || id_rol === 2) {
+        // Insertar la persona relacionada en la tabla `personas`
+        await connection.query(
+          'INSERT INTO personas (id_usuario, dni, sexo, nombre, apellido, correo, telefono) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [id_usuario, dni, sexo, nombre, apellido, correo, telefono]
+        );
+      }
+      
       // Confirmar la transacción
       await connection.commit();
       return id_usuario; // Retorna el ID del usuario creado
     } catch (error) {
       // Revertir la transacción en caso de error
       await connection.rollback();
+
+      // Si el error es por duplicación de clave
+      if (error.code === 'ER_DUP_ENTRY') {
+        throw new Error('El DNI ya está registrado.');
+      }
+
       throw new Error('Error al crear el usuario y la persona: ' + error.message);
     } finally {
       connection.release();
@@ -65,15 +81,21 @@ module.exports = {
 
   // Método que utiliza la lógica anterior para manejar solicitudes
   createUser: async (req, res) => {
-    const { usuario, password, id_rol, dni, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono } = req.body;
+    const { id_rol, dni, sexo, nombre, apellido, correo, telefono } = req.body;
 
     try {
       const userId = await module.exports.createUserLogic(
-        usuario, password, id_rol, dni, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono
+        dni, dni, id_rol, dni, sexo, nombre, apellido, correo, telefono
       );
-      return res.status(201).json({ success: true, message: 'Usuario y persona creados exitosamente', userId });
+      return res.json({ message: 'Usuario y persona creados exitosamente' });
     } catch (error) {
       console.error('Error al crear el usuario y la persona:', error);
+
+      // Si el error es por duplicación de DNI
+      if (error.message.includes('El DNI o usuario ya está registrado.')) {
+        return res.status(409).json({ success: false, message: 'Error: El DNI ya está registrado.' });
+      }
+
       return res.status(500).json({ success: false, message: error.message });
     }
   },

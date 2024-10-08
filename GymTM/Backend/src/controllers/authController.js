@@ -16,10 +16,10 @@ module.exports = {
 
       // Enviar el token en una cookie HTTP-only y segura
       res.cookie('token', token, {
-        httpOnly: true, // Hace que la cookie no sea accesible desde JavaScript
-        secure: process.env.NODE_ENV === 'production', // Solo en HTTPS si está en producción
-        sameSite: 'Strict', // Evita que la cookie sea enviada en solicitudes entre sitios
-        maxAge: 3600000 // Tiempo de expiración de la cookie en milisegundos (1 hora)
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Strict',
+        maxAge: 3600000 // 1 hora
       });
 
       return res.json({
@@ -33,7 +33,14 @@ module.exports = {
         },
       });
     } catch (error) {
-      console.error('Error al iniciar sesión:', error);
+      console.error('Error al iniciar sesión:', error.message);
+
+      // Mostrar mensaje específico si el usuario está dado de baja
+      if (error.message === 'Usuario dado de baja') {
+        return res.status(403).json({ success: false, message: 'Este usuario está dado de baja' });
+      }
+
+      // Mensaje general para credenciales incorrectas
       return res.status(401).json({ success: false, message: 'Credenciales incorrectas' });
     }
   },

@@ -89,6 +89,21 @@ const TrainersScreen = () => {
     setMode('C');
   };
 
+  // Dar de baja/activar entrenador
+  const handleToggleStatus = async (id) => {
+    console.log(id)
+    try {
+      await updateData('entrenadores/toggleStatus', { id: id });
+
+      toast.success("Estado del entrenador actualizado exitosamente!");
+
+      fetchTrainers();
+      handleBack();
+    } catch (error) {
+      toast.error('Hubo un error al actualizar el estado del entrenador.');
+    }
+  };
+
   // Guardar entrenador (Alta o Modificar)
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -149,6 +164,7 @@ const TrainersScreen = () => {
                     <ActionButtons 
                       handleConsult={handleConsult} 
                       handleEdit={handleEdit} 
+                      handleToggleStatus={handleToggleStatus}
                       item={trainer} 
                       buttonVisibility = {{
                         consult: true,

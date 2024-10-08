@@ -60,7 +60,7 @@ module.exports = {
       const fechaNacimientoISO = fecha_nacimiento ? convertToISODate(fecha_nacimiento) : null;
 
       // 1. Insertar usuario a través del controlador de usuarios
-      const id_usuario = await usersController.createUserLogic(dni, dni, 4);
+      const id_usuario = await usersController.createUserLogic(dni, dni, 4, dni, sexo, nombre, apellido, correo, telefono);
 
       let id_domicilio;
 
@@ -75,7 +75,7 @@ module.exports = {
 
       // 3. Insertar cliente
       await connection.query(
-        'INSERT INTO personas (id_usuario, dni, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono, fecha_alta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE())',
+        'INSERT INTO personas (id_usuario, dni, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
         [id_usuario, dni, sexo, nombre, apellido, fechaNacimientoISO, id_domicilio, correo, telefono]
       );
 
@@ -145,9 +145,6 @@ module.exports = {
       if (!clientId) {
         return res.status(400).json({ error: 'El campo "id" es obligatorio.' });
       }
-
-      // Cambiar el estado del cliente
-      await connection.query('UPDATE usuarios SET fecha_baja = IF(fecha_baja IS NULL, CURDATE(), NULL) WHERE id = ? AND u.id_rol = 4', [clientId]);
 
       // Cambiar el estado del usuario a través del controlador de usuarios
       await usersController.toggleUserStatusLogic(clientId);
