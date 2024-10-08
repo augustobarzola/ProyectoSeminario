@@ -1,5 +1,5 @@
 import { faHouse, faDumbbell, faUserGear } from '@fortawesome/free-solid-svg-icons';
-import RoutinesScreen from '../screens/admin/routinesScreen/RoutinesScreen';
+import RoutinesScreen from '../screens/client/routinesScreen/RoutinesScreen';
 import PerfilScreen from '../screens/perfilScreen/PerfilScreen';
 import HomeScreen from '../screens/client/homeScreen/HomeScreen';
 

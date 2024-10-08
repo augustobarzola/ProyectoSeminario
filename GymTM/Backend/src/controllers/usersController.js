@@ -227,4 +227,39 @@ module.exports = {
       return res.status(500).json({ success: false, message: 'Error en el servidor' });
     }
   },
+  updateUser: async (req, res) => {
+    const connection = await db.getConnection();
+    await connection.beginTransaction();
+
+    try {
+        const userId = req.params.id;
+        const { nombre, apellido, sexo, especialidad, id_rol, correo, telefono } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({ error: 'El campo "id" es obligatorio.' });
+        }
+
+        // 1. Actualizar la tabla personas
+        await connection.query(
+            'UPDATE personas SET nombre = ?, apellido = ?, sexo = ?, correo = ?, telefono = ? WHERE id_usuario = ?',
+            [nombre, apellido, sexo, correo, telefono, userId]
+        );
+
+        // 2. Actualizar la tabla usuarios
+        await connection.query(
+            'UPDATE usuarios SET especialidad = ?, id_rol = ? WHERE id = ?',
+            [especialidad, id_rol, userId]
+        );
+
+        await connection.commit();
+        res.json({ message: 'Usuario actualizado exitosamente.' });
+        
+    } catch (error) {
+        await connection.rollback();
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar el usuario.' });
+    } finally {
+        connection.release();
+    }
+  },
 };

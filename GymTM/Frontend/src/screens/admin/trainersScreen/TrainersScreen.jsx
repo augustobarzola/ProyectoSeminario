@@ -91,7 +91,6 @@ const TrainersScreen = () => {
 
   // Dar de baja/activar entrenador
   const handleToggleStatus = async (id) => {
-    console.log(id)
     try {
       await updateData('entrenadores/toggleStatus', { id: id });
 

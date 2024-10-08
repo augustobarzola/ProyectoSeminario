@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import LoginScreen from '../../screens/loginScreen/LoginScreen';
@@ -14,6 +14,7 @@ import ClientFooter from '../client/footer/Footer';
 import AdminHeader from '../admin/header/Header';
 import AdminMain from '../admin/main/Main';
 import AdminFooter from '../admin/footer/Footer';
+import { getUserData } from '../../services/authService';
 
 const AdminLayout = () => (
   <ConfirmationModalProvider>
@@ -33,6 +34,12 @@ const ClientLayout = () => (
 
 const RoutesWrapper = () => {
   const { isAdminLoggedIn, isClientLoggedIn, loading } = useAuth();
+  const [user, setUser] = useState(null);
+  
+  useEffect(() => {
+    const data = getUserData();
+    setUser(data);
+  }, []);
 
   if (loading) {
     return <CustomSpinner />;
@@ -45,7 +52,7 @@ const RoutesWrapper = () => {
         path="/login"
         element={
           isAdminLoggedIn ? (
-            <Navigate to="/admin" />
+            user?.id_rol === 3 ? <Navigate to="/admin/rutinas" /> : <Navigate to="/admin" />
           ) : isClientLoggedIn ? (
             <Navigate to="/" />
           ) : (

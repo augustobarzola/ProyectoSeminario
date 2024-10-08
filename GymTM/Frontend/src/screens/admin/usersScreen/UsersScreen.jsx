@@ -111,6 +111,7 @@ const UsersScreen = () => {
   // Guardar usuario (Alta o Modificar)
   const onSubmit = async (data) => {
     setIsLoading(true);
+    console.log(data)
     try {
       if (mode === 'A') {
         await insertData('usuarios', { body: data });
