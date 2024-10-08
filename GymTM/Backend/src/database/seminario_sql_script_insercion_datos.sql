@@ -45,10 +45,10 @@ INSERT INTO asistencias (id_cliente, id_recepcionista, fecha_ingreso)
 VALUES 
 (4, 2, '2024-01-05 08:00:00');
 
-INSERT INTO metodos_pago (nombre, fecha_alta, fecha_baja)
+INSERT INTO metodos_pago (nombre)
 VALUES 
-('Efectivo', '2024-01-01', NULL),
-('Tarjeta de Crédito', '2024-01-01', NULL);
+('Efectivo'),
+('Tarjeta de Crédito');
 
 INSERT INTO planes_pago (nombre, descripcion, fecha_alta, fecha_baja)
 VALUES 
