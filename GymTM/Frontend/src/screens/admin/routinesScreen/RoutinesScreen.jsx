@@ -174,7 +174,7 @@ const RoutinesScreen = () => {
       {/* Modo listado de rutinas */}
       {mode === 'L' && (
         <>
-          <h3 className="text-center">Rutinas</h3>
+          <h3 className="text-center">Rutinas de Entrenamiento</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar rutinas" />
             <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Crear rutina'}</Button>

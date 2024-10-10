@@ -38,14 +38,14 @@ const Login = () => {
         </Row>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Form.Group controlId="dni" className="mb-3">
-            <Form.Label>DNI</Form.Label>
+            <Form.Label>Documento</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Ingrese su DNI"
+              placeholder="Ingrese su Documento"
               className="bg-dark text-white border-secondary"
               {...register('dni', { required: true })}
             />
-            {errors.dni && <p className="text-danger">Por favor, ingrese su DNI.</p>}
+            {errors.dni && <p className="text-danger">Por favor, ingrese su Documento.</p>}
           </Form.Group>
 
           <Form.Group controlId="password" className="mb-4">

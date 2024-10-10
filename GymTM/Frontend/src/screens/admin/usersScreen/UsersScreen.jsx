@@ -69,7 +69,7 @@ const UsersScreen = () => {
       }
     };
 
-  // Filtrar usuarios por DNI
+  // Filtrar usuarios por Documento
   const handleSearch = (e) => {
     const dni = e.target.value;
     if (dni) {
@@ -142,14 +142,14 @@ const UsersScreen = () => {
         <>
           <h3 className="text-center">Lista de Usuarios</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar por DNI" onChange={handleSearch} />
+            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar por Documento" onChange={handleSearch} />
             <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Agregar usuario'}</Button>
           </div>
           <Table striped bordered hover variant="dark" className='m-0 custom-border' responsive>
             <thead>
               <tr>
                 <th>Nombre</th>
-                <th>DNI</th>
+                <th>Documento</th>
                 <th>Correo</th>
                 <th>Rol</th>
                 <th>Fecha Alta</th>
@@ -204,7 +204,7 @@ const UsersScreen = () => {
               option={mode}
             />
             <CustomFormInput
-              label="DNI"
+              label="Documento"
               controlId="dni"
               register={register}
               errors={errors.dni}

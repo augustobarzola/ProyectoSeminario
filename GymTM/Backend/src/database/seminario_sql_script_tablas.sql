@@ -14,6 +14,7 @@ CREATE TABLE usuarios (
     especialidad VARCHAR(50),
     fecha_alta DATE NOT NULL,
     fecha_baja DATE,
+    motivo_baja VARCHAR(500),
     FOREIGN KEY (id_rol) REFERENCES roles(id)
 );
 

@@ -61,7 +61,7 @@ const TrainersScreen = () => {
     }
   };
 
-  // Filtrar entrenadores por DNI
+  // Filtrar entrenadores por Documento
   const handleSearch = (e) => {
     const dni = e.target.value;
     if (dni) {
@@ -136,14 +136,14 @@ const TrainersScreen = () => {
         <>
           <h3 className="text-center">Lista de Entrenadores</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar por DNI" onChange={handleSearch} />
+            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar por Documento" onChange={handleSearch} />
             {user?.id_rol === 1 && <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Agregar entrenador'}</Button>}
           </div>
           <Table striped bordered hover variant="dark" className='m-0 custom-border' responsive>
             <thead>
               <tr>
                 <th>Nombre</th>
-                <th>DNI</th>
+                <th>Documento</th>
                 <th>Sexo</th>
                 <th>Especialidad</th>
                 <th>Fecha de Nacimiento</th>
@@ -205,7 +205,7 @@ const TrainersScreen = () => {
               option={mode}
             />
             <CustomFormInput
-              label="DNI"
+              label="Documento"
               controlId="dni"
               register={register}
               errors={errors.dni}

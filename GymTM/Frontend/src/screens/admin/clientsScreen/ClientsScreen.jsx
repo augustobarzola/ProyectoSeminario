@@ -66,7 +66,7 @@ const ClientsScreen = () => {
     }
   };
 
-  // Filtrar clientes por DNI
+  // Filtrar clientes por Documento
   const handleSearch = (e) => {
     const dni = e.target.value;
     if (dni) {
@@ -141,16 +141,16 @@ const ClientsScreen = () => {
     <Container fluid className="py-4">
       {mode === 'L' && (
         <>
-          <h3 className="text-center">Lista de Clientes</h3>
+          <h3 className="text-center">Lista de Clientes y Asignacion de Planes de Pago</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar por DNI" onChange={handleSearch} />
+            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar " onChange={handleSearch} />
             {(user?.id_rol === 1 || user?.id_rol === 2) && <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Agregar cliente'}</Button>}
           </div>
           <Table striped bordered hover variant="dark" className='m-0 custom-border' responsive>
             <thead>
               <tr>
                 <th>Nombre</th>
-                <th>DNI</th>
+                <th>Documento</th>
                 <th>Sexo</th>
                 <th>Edad</th>
                 <th>Plan Pago</th>
@@ -212,7 +212,7 @@ const ClientsScreen = () => {
               option={mode}
             />
             <CustomFormInput
-              label="DNI"
+              label="Documento"
               controlId="dni"
               register={register}
               errors={errors.dni}

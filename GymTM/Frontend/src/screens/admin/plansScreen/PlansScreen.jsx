@@ -125,7 +125,7 @@ const PlansScreen = () => {
     <Container fluid className="py-4">
       {mode === 'L' && (
         <>
-          <h3 className="text-center">Lista de Planes</h3>
+          <h3 className="text-center">Lista de Planes de Pago</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <Form.Control
               className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`}
@@ -178,7 +178,7 @@ const PlansScreen = () => {
                             {plan.metodos_pago.map(metodo => (
                               <tr key={metodo.id}>
                                 <td>{metodo.nombre}</td>
-                                <td>{metodo.precio}</td>
+                                <td>$ {metodo.precio}</td>
                                 <td>{plan.fecha_alta}</td>
                                 <td>{plan.fecha_baja}</td>
                                 <td className="col-1 text-center">

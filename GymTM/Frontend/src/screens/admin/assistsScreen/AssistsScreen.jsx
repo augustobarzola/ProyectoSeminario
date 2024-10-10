@@ -7,13 +7,14 @@ import CustomSpinner from '../../../components/customSpinner/CustomSpinner';
 import CustomFormInput from '../../../components/customFormInput/CustomFormInput';
 import ActionButtons from '../../../components/actionButtons/ActionButtons';
 import showErrorMessage from '../../../utils/showErrorMessage';
+import { useConfirmationModal } from '../../../components/confirmationModalProvider/ConfirmationModalProvider';
 
 const AsistenciasScreen = () => {
   const [asistencias, setAsistencias] = useState([]); // Lista de asistencias
   const [isLoading, setIsLoading] = useState(false);
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   
-  const initialFormState = { dni: '' }; // Formulario solo para ingresar el DNI del cliente
+  const initialFormState = { dni: '' }; // Formulario solo para ingresar el Documento del cliente
 
   useEffect(() => {
     fetchAsistencias(); // Obtener asistencias al cargar el componente
@@ -45,6 +46,7 @@ const AsistenciasScreen = () => {
   };
 
   const handleDelete = async (id) => {
+    //useConfirmationModal();
     try {
       await deleteData('asistencias', id);
       toast.success('Asistencia eliminada exitosamente');
@@ -61,7 +63,7 @@ const AsistenciasScreen = () => {
 
       <Form onSubmit={handleSubmit(onSubmit)} className="mb-3">
         <CustomFormInput
-          label="DNI del Cliente"
+          label="Documento del Cliente"
           controlId="dni"
           register={register}
           errors={errors.dni}
@@ -78,7 +80,7 @@ const AsistenciasScreen = () => {
       <Table striped bordered hover variant="dark" className='m-0 custom-border' responsive>
         <thead>
           <tr>
-            <th>DNI</th>
+            <th>Documento</th>
             <th>Cliente</th>
             <th>Recepcionista</th>
             <th>Fecha Ingreso</th>
