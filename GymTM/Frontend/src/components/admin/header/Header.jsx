@@ -18,7 +18,7 @@ const Header = () => {
           <img src={logo} alt="GymTM Logo" className="logo-image ms-2 me-2" />
           <h3 className="text-white mb-0">GymTM Administración</h3>
         </div>
-        <h4 className="text-white mb-0">{user?.nombre_completo} ({user?.rol})</h4>
+        <h5 className="text-white mb-0">{user?.nombre_completo} ({user?.rol})</h5>
       </div>
     </header>
   );
