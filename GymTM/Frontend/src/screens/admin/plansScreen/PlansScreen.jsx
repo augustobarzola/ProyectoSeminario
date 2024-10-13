@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import showErrorMessage from '../../../utils/showErrorMessage';
+import { getUserData } from '../../../services/authService';
 
 const PlansScreen = () => {
   const [mode, setMode] = useState('L');
@@ -19,7 +20,8 @@ const PlansScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activePlanId, setActivePlanId] = useState(null); // Para manejar la subtabla
   const isMobile = useIsMobile();
-  
+  const [user, setUser] = useState(null);
+
   const initialFormState = {
     nombre: '',
     descripcion: '',
@@ -30,6 +32,11 @@ const PlansScreen = () => {
   };
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
+
+  useEffect(() => {
+    const data = getUserData();
+    setUser(data);
+  }, []);
 
   useEffect(() => {
     if (mode === 'L') {
@@ -133,7 +140,7 @@ const PlansScreen = () => {
               placeholder="Buscar por nombre"
               onChange={handleSearch}
             />
-            <Button variant="success" onClick={handleAddPlan}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Agregar plan'}</Button>
+            {user?.id_rol === 1 && <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Agregar plan'}</Button>}
           </div>
           <Table striped bordered hover variant="dark" className='m-0 custom-border' responsive>
             <thead>
