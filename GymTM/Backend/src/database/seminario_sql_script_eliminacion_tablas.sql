@@ -13,3 +13,4 @@ DROP TABLE IF EXISTS domicilios;
 DROP TABLE IF EXISTS planes_pago;
 DROP TABLE IF EXISTS metodos_pago;
 DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS gimnasios;
