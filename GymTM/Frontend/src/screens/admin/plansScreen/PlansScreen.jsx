@@ -65,7 +65,7 @@ const PlansScreen = () => {
     setFilteredPlans(results);
   };
 
-  const handleAddPlan = () => {
+  const handleAdd = () => {
     reset(initialFormState);
     setMode('A');
   };

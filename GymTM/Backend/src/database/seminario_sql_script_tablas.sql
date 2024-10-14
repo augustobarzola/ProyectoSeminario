@@ -30,21 +30,42 @@ CREATE TABLE gimnasios (
 
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario VARCHAR(12) NOT NULL UNIQUE,
+    usuario VARCHAR(12) NOT NULL,
     contrasenia VARCHAR(255) NOT NULL,
-    id_rol INT NOT NULL,
-    especialidad VARCHAR(50),
     fecha_alta DATE NOT NULL,
     fecha_baja DATE,
     motivo_baja VARCHAR(500),
-    id_gimnasio INT NOT NULL,
-    FOREIGN KEY (id_gimnasio) REFERENCES gimnasios(id),
+    id_gimnasio INT,
+    FOREIGN KEY (id_gimnasio) REFERENCES gimnasios(id)
+);
+
+CREATE TABLE usuarios_roles (
+	id_usuario INT NOT NULL,
+    id_rol INT NOT NULL,
+    PRIMARY KEY (id_usuario, id_rol),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
     FOREIGN KEY (id_rol) REFERENCES roles(id)
+);
+
+CREATE TABLE especialidades (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    id_gimnasio INT NOT NULL,
+    FOREIGN KEY (id_gimnasio) REFERENCES gimnasios(id)
+);
+
+CREATE TABLE usuarios_especialidades (
+	id_usuario INT NOT NULL,
+    id_especialidad INT NOT NULL,
+    PRIMARY KEY (id_usuario, id_especialidad),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
+    FOREIGN KEY (id_especialidad) REFERENCES especialidades(id)
 );
 
 CREATE TABLE personas (
     id_usuario INT PRIMARY KEY,
-    dni VARCHAR(12) NOT NULL UNIQUE,
+    documento VARCHAR(12) NOT NULL UNIQUE,
     sexo VARCHAR(12) NOT NULL,
     nombre VARCHAR(64) NOT NULL,
     apellido VARCHAR(64) NOT NULL,
@@ -52,8 +73,6 @@ CREATE TABLE personas (
     id_domicilio INT,
     correo VARCHAR(70),
     telefono VARCHAR(15),
-    id_gimnasio INT NOT NULL,
-    FOREIGN KEY (id_gimnasio) REFERENCES gimnasios(id),
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
     FOREIGN KEY (id_domicilio) REFERENCES domicilios(id)
 );
@@ -84,9 +103,7 @@ CREATE TABLE detalles_rutina_ejercicios (
     repeticiones VARCHAR(100) NOT NULL,
     tiempo_descanso INT, -- Tiempo de descanso en segundos
     explicacion TEXT,
-    id_gimnasio INT NOT NULL,
     PRIMARY KEY (id_rutina, id_ejercicio),
-    FOREIGN KEY (id_gimnasio) REFERENCES gimnasios(id),
     FOREIGN KEY (id_rutina) REFERENCES rutinas(id),
     FOREIGN KEY (id_ejercicio) REFERENCES ejercicios(id)
 );
@@ -97,9 +114,7 @@ CREATE TABLE clientes_rutinas (
     observaciones TEXT,
     fecha_inicio DATE NOT NULL,
     fecha_fin DATE,
-    id_gimnasio INT NOT NULL,
     PRIMARY KEY (id_cliente, id_rutina),
-    FOREIGN KEY (id_gimnasio) REFERENCES gimnasios(id),
     FOREIGN KEY (id_cliente) REFERENCES usuarios(id),
     FOREIGN KEY (id_rutina) REFERENCES rutinas(id)
 );
@@ -117,9 +132,7 @@ CREATE TABLE asistencias (
 
 CREATE TABLE metodos_pago (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL,
-    id_gimnasio INT NOT NULL,
-    FOREIGN KEY (id_gimnasio) REFERENCES gimnasios(id)
+    nombre VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE planes_pago (
@@ -138,9 +151,7 @@ CREATE TABLE planes_metodos_pago (
     precio DECIMAL(10, 2) NOT NULL,
     fecha_alta DATE NOT NULL,
     fecha_baja DATE,
-    id_gimnasio INT NOT NULL,
     PRIMARY KEY (id_plan_pago, id_metodo_pago),
-    FOREIGN KEY (id_gimnasio) REFERENCES gimnasios(id),
     FOREIGN KEY (id_plan_pago) REFERENCES planes_pago(id),
     FOREIGN KEY (id_metodo_pago) REFERENCES metodos_pago(id)
 );
@@ -150,9 +161,7 @@ CREATE TABLE clientes_planes_pago (
     id_plan_pago INT NOT NULL,
     fecha_inicio DATE NOT NULL,
     fecha_fin DATE,
-    id_gimnasio INT NOT NULL,
     PRIMARY KEY (id_cliente, id_plan_pago),
-    FOREIGN KEY (id_gimnasio) REFERENCES gimnasios(id),
     FOREIGN KEY (id_cliente) REFERENCES usuarios(id),
     FOREIGN KEY (id_plan_pago) REFERENCES planes_pago(id)
 );
