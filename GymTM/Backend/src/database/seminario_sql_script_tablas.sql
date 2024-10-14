@@ -6,6 +6,16 @@ CREATE TABLE roles (
     fecha_baja DATE
 );
 
+CREATE TABLE domicilios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    calle VARCHAR(150) NOT NULL,
+    numero VARCHAR(10) NOT NULL,
+    ciudad VARCHAR(100) NOT NULL,
+    provincia VARCHAR(100) NOT NULL,
+    codigo_postal VARCHAR(10) NOT NULL,
+    pais VARCHAR(100) NOT NULL
+);	
+
 CREATE TABLE gimnasios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -14,20 +24,9 @@ CREATE TABLE gimnasios (
     telefono VARCHAR(15),
     motivo_baja VARCHAR(500),
     fecha_alta DATE NOT NULL,
-    fecha_baja DATE
+    fecha_baja DATE,
+    FOREIGN KEY (id_domicilio) REFERENCES domicilios(id)
 );
-
-CREATE TABLE domicilios (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    calle VARCHAR(150) NOT NULL,
-    numero VARCHAR(10) NOT NULL,
-    ciudad VARCHAR(100) NOT NULL,
-    provincia VARCHAR(100) NOT NULL,
-    codigo_postal VARCHAR(10) NOT NULL,
-    pais VARCHAR(100) NOT NULL,
-    id_gimnasio INT NOT NULL,
-    FOREIGN KEY (id_gimnasio) REFERENCES gimnasios(id)
-);	
 
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
