@@ -12,6 +12,7 @@ CREATE TABLE gimnasios (
     id_domicilio INT NOT NULL,
     correo VARCHAR(70),
     telefono VARCHAR(15),
+    motivo_baja VARCHAR(500),
     fecha_alta DATE NOT NULL,
     fecha_baja DATE
 );
