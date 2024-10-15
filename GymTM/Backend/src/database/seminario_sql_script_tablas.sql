@@ -145,7 +145,7 @@ CREATE TABLE planes_pago (
     FOREIGN KEY (id_gimnasio) REFERENCES gimnasios(id)
 );
 
-CREATE TABLE planes_metodos_pago (
+CREATE TABLE detalle_planes_pago (
     id_plan_pago INT NOT NULL,
     id_metodo_pago INT NOT NULL,
     precio DECIMAL(10, 2) NOT NULL,
@@ -166,7 +166,7 @@ CREATE TABLE clientes_planes_pago (
     FOREIGN KEY (id_plan_pago) REFERENCES planes_pago(id)
 );
 
-CREATE TABLE pagos (
+CREATE TABLE clientes_pagos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_cliente INT NOT NULL,
     id_plan_pago INT NOT NULL,

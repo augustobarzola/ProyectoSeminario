@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS pagos;
+DROP TABLE IF EXISTS clientes_pagos;
 DROP TABLE IF EXISTS clientes_planes_pago;
-DROP TABLE IF EXISTS planes_metodos_pago;
+DROP TABLE IF EXISTS detalle_planes_pago;
 DROP TABLE IF EXISTS planes_pago;
 DROP TABLE IF EXISTS metodos_pago;
 DROP TABLE IF EXISTS asistencias;

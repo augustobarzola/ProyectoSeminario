@@ -98,7 +98,7 @@ VALUES
 ('Plan Anual', 'Acceso anual con descuento', '2024-01-01', NULL, 2);
 
 -- Insertar asociaciones de planes y métodos de pago
-INSERT INTO planes_metodos_pago (id_plan_pago, id_metodo_pago, precio, fecha_alta, fecha_baja)
+INSERT INTO detalle_planes_pago (id_plan_pago, id_metodo_pago, precio, fecha_alta, fecha_baja)
 VALUES 
 (1, 1, 100.00, '2024-01-01', NULL),
 (1, 2, 105.00, '2024-01-01', NULL),
@@ -106,7 +106,7 @@ VALUES
 (4, 2, 115.00, '2024-01-01', NULL);
 
 -- Insertar pagos
-INSERT INTO pagos (id_cliente, id_plan_pago, id_metodo_pago, fecha_pago, importe, id_gimnasio)
+INSERT INTO clientes_pagos (id_cliente, id_plan_pago, id_metodo_pago, fecha_pago, importe, id_gimnasio)
 VALUES 
 (4, 4, 1, '2024-01-07', 110.00, 2);  -- Juan pagó el Plan Mensual en Efectivo en Gimnasio Norte
 
