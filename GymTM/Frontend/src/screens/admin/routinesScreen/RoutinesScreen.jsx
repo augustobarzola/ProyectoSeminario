@@ -19,6 +19,7 @@ import showErrorMessage from '../../../utils/showErrorMessage';
 const RoutinesScreen = () => {
   const [mode, setMode] = useState('L'); // Modos: L = Listar, A = Alta, M = Modificar, C = Consultar, Asignar, E = Crear Ejercicio
   const [routines, setRoutines] = useState([]); 
+  const [filteredRoutines, setFilteredRoutines] = useState([]); // Rutinas filtradas por búsqueda
   const [exercises, setExercises] = useState([]); 
   const [selectedRoutine, setSelectedRoutine] = useState(null); 
   const [clients, setClients] = useState([]); 
@@ -58,6 +59,7 @@ const RoutinesScreen = () => {
     try {
       const response = await getData('rutinas', { user: user });
       setRoutines(response);
+      filteredRoutines(response);
     } catch (error) {
       showErrorMessage('Error al obtener rutinas', error);
     } finally {
@@ -72,6 +74,16 @@ const RoutinesScreen = () => {
       setExercises(response);
     } catch (error) {
       showErrorMessage('Error al obtener ejercicios', error);
+    }
+  };
+
+  const handleSearch = (e) => {
+    const text = e.target.value;
+    if (text) {
+      const results = routines.filter(routine => routine.nombre.includes(text) || routine.entrenador.includes(text));
+      setFilteredRoutines(results);
+    } else {
+      setFilteredRoutines(routines);
     }
   };
 
@@ -176,7 +188,7 @@ const RoutinesScreen = () => {
         <>
           <h3 className="text-center">Rutinas de Entrenamiento</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar rutinas" />
+            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar Nombre/Entrenador" onChange={handleSearch} />
             <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Crear rutina'}</Button>
           </div>
           <Table striped bordered hover variant="dark" className="custom-border" responsive>
@@ -190,7 +202,7 @@ const RoutinesScreen = () => {
               </tr>
             </thead>
             <tbody>
-              {routines.map(routine => (
+              {filteredRoutines.map(routine => (
                 <tr key={routine.id}>
                   <td>{routine.nombre_rutina}</td>
                   <td>{routine.descripcion}</td>

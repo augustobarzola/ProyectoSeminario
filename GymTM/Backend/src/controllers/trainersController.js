@@ -49,10 +49,10 @@ module.exports = {
     await connection.beginTransaction();
 
     try {
-      const { nombre, apellido, dni, sexo, fecha_nacimiento, calle, numero, ciudad, provincia, codigo_postal, pais, correo, telefono, especialidad } = req.body;
+      const { nombre, apellido, documento, sexo, fecha_nacimiento, calle, numero, ciudad, provincia, codigo_postal, pais, correo, telefono, especialidad } = req.body;
 
       // Validar campos obligatorios
-      if (!nombre || !apellido || !dni || !sexo) {
+      if (!nombre || !apellido || !documento || !sexo) {
         return res.status(400).json({ error: 'Faltan campos obligatorios.' });
       }
 
@@ -60,7 +60,7 @@ module.exports = {
       const fechaNacimientoISO = fecha_nacimiento ? convertToISODate(fecha_nacimiento) : null;
 
       // 1. Insertar usuario a través del controlador de usuarios
-      const id_usuario = await usersController.createUserLogic(dni, dni, 3, dni, sexo, nombre, apellido, correo, telefono, especialidad);
+      const id_usuario = await usersController.createUserLogic(documento, documento, 3, documento, sexo, nombre, apellido, correo, telefono, especialidad);
 
       let id_domicilio;
 
@@ -75,8 +75,8 @@ module.exports = {
 
       // 3. Insertar entrenador
       await connection.query(
-        'INSERT INTO personas (id_usuario, dni, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [id_usuario, dni, sexo, nombre, apellido, fechaNacimientoISO, id_domicilio, correo, telefono]
+        'INSERT INTO personas (id_usuario, documento, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [id_usuario, documento, sexo, nombre, apellido, fechaNacimientoISO, id_domicilio, correo, telefono]
       );
 
       await connection.commit();

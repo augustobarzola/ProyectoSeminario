@@ -28,7 +28,7 @@ const TrainersScreen = () => {
   const initialFormState = {
     nombre: '',
     apellido: '',
-    dni: '',
+    documento: '',
     sexo: '',
     correo: '',
     telefono: '',
@@ -61,11 +61,11 @@ const TrainersScreen = () => {
     }
   };
 
-  // Filtrar entrenadores por Documento
+  // Filtrar entrenadores por Documento o Nombre
   const handleSearch = (e) => {
-    const dni = e.target.value;
-    if (dni) {
-      const results = trainers.filter(trainer => trainer.dni.includes(dni));
+    const text = e.target.value;
+    if (text) {
+      const results = trainers.filter(trainer => trainer.documento.includes(text) || trainer.apellido.includes(text) || trainer.nombre.includes(text));
       setFilteredTrainers(results);
     } else {
       setFilteredTrainers(trainers);
@@ -136,7 +136,7 @@ const TrainersScreen = () => {
         <>
           <h3 className="text-center">Lista de Entrenadores</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar por Documento" onChange={handleSearch} />
+            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar por Documento/Nombre" onChange={handleSearch} />
             {user?.id_rol === 1 && <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Agregar entrenador'}</Button>}
           </div>
           <Table striped bordered hover variant="dark" className='m-0 custom-border' responsive>
@@ -145,18 +145,18 @@ const TrainersScreen = () => {
                 <th>Nombre</th>
                 <th>Documento</th>
                 <th>Sexo</th>
-                <th>Especialidad</th>
+                <th>Especialidades</th>
                 <th>Fecha de Nacimiento</th>
                 <th>Fecha Alta</th>
                 <th>Fecha Baja</th>
-                <th className="">Acciones</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filteredTrainers?.map(trainer => (
                 <tr key={trainer.id}>
-                  <td>{trainer.nombre}, {trainer.apellido}</td>
-                  <td>{trainer.dni}</td>
+                  <td>{trainer.apellido}, {trainer.nombre}</td>
+                  <td>{trainer.documento}</td>
                   <td>{trainer.sexo}</td>
                   <td>{trainer.especialidad}</td>
                   <td>{trainer.fecha_nacimiento}</td>
@@ -206,9 +206,9 @@ const TrainersScreen = () => {
             />
             <CustomFormInput
               label="Documento"
-              controlId="dni"
+              controlId="documento"
               register={register}
-              errors={errors.dni}
+              errors={errors.documento}
               option={mode}
               disabled={mode === 'C' || mode === 'M'}
             />

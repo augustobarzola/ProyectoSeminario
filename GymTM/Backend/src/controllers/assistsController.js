@@ -6,7 +6,7 @@ module.exports = {
   getAllAssists: async (req, res) => {
     try {
       const [assists] = await db.query(`
-        SELECT a.id_asistencia, pc.dni, 
+        SELECT a.id_asistencia, pc.documento, 
               CONCAT(pr.nombre, ', ', pr.apellido) AS nombre_recepcionista, 
               CONCAT(pc.nombre, ', ', pc.apellido) AS nombre_cliente,
               a.fecha_ingreso 
@@ -36,7 +36,7 @@ module.exports = {
       const assistId = req.params.id;
       const [assist] = await db.query(
         `
-        SELECT a.id_asistencia, uc.dni, 
+        SELECT a.id_asistencia, uc.documento, 
               CONCAT(pr.nombre, ', ', pr.apellido) AS nombre_recepcionista, 
               CONCAT(pc.nombre, ', ', pc.apellido) AS nombre_cliente
               a.fecha_ingreso 
@@ -71,19 +71,19 @@ module.exports = {
     await connection.beginTransaction();
 
     try {
-      const { dni } = req.body;
+      const { documento } = req.body;
 
-      // Validar que se envió el dni
-      if (!dni) {
+      // Validar que se envió el documento
+      if (!documento) {
         return res
           .status(400)
-          .json({ error: 'El campo "dni" es obligatorio.' });
+          .json({ error: 'El campo "documento" es obligatorio.' });
       }
 
-      // Buscar al cliente por DNI
+      // Buscar al cliente por documento
       const [client] = await db.query(
         "SELECT * FROM usuarios WHERE usuario = ? AND id_rol = 4",
-        [dni]
+        [documento]
       );
 
       if (client.length === 0) {
@@ -166,7 +166,7 @@ module.exports = {
     try {
       const [assists] = await db.query(`
         SELECT a.id_asistencia, 
-               pc.dni, 
+               pc.documento, 
                CONCAT(pr.nombre, ', ', pr.apellido) AS nombre_cliente,
                a.fecha_ingreso 
         FROM asistencias a

@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { getAccessibleRoutes } from '../../routes/accesibleRoutes';
 import { useIsMobile } from '../../hooks/useIsMobile';
+import { useConfirmationModal } from '../confirmationModalProvider/ConfirmationModalProvider';
 
 const Sidebar = () => {
   const isMobile = useIsMobile();
@@ -17,10 +18,17 @@ const Sidebar = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const { handleLogout } = useContext(AuthContext);
+  const openConfirmationModal = useConfirmationModal();
 
   const onLogout = () => {
-    handleLogout();
-    navigate('/login');
+    openConfirmationModal({
+      title: 'Cerrar Sesión',
+      message: '¿Estás seguro de que deseas cerrar sesión?',
+      onConfirm: async () => {
+        handleLogout();
+        navigate('/login'); // Redirige al usuario al login si no está autenticado
+      }
+    });
   };
   
   useEffect(() => {

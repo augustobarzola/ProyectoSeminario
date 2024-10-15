@@ -17,10 +17,14 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     setLoginError(null); // Resetear mensaje de error
-    const result = await handleLogin(data.dni, data.password);
-    
+    const result = await handleLogin(data.documento, data.password);
     if (result.success) {
-      navigate('/'); // Redirige al usuario al inicio si está autenticado
+      if (result.userData.roles.length > 1) {
+        // Redirigir a la pantalla de selección de rol si hay más de un rol
+        navigate('/seleccionRol', { state: { roles: result.userData.roles } }); 
+      } else {
+        navigate('/'); // Redirige al usuario al inicio si solo tiene un rol
+      }
     } else {
       setLoginError(result.message); // Mostrar mensaje de error
     }
@@ -33,19 +37,19 @@ const Login = () => {
           <Col className="text-center">
             <img src={logo} alt="GymTM Logo" className="logo-image-login mb-3" />
             <h1 className="text-white bold">Bienvenido a GymTM</h1>
-            <p className="text-white-50">"La grandeza se construye con esfuerzo. ¡Hoy es tu día para empezar!"</p> {/* Mensaje motivacional */}
+            <p className="text-white-50">"La grandeza se construye con esfuerzo. ¡Hoy es tu día para empezar!"</p>
           </Col>
         </Row>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Form.Group controlId="dni" className="mb-3">
+          <Form.Group controlId="documento" className="mb-3">
             <Form.Label>Documento</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Ingrese su Documento"
+              placeholder="Ingrese su documento"
               className="bg-dark text-white border-secondary"
-              {...register('dni', { required: true })}
+              {...register('documento', { required: true })}
             />
-            {errors.dni && <p className="text-danger">Por favor, ingrese su Documento.</p>}
+            {errors.documento && <p className="text-danger">Por favor, ingrese su documento.</p>}
           </Form.Group>
 
           <Form.Group controlId="password" className="mb-4">

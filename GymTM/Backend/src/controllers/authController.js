@@ -6,13 +6,13 @@ const secretKey = process.env.JWT_SECRET_KEY;
 module.exports = {
   // Login
   login: async (req, res) => {
-    const { dni, password } = req.body;
+    const { documento, password } = req.body;
 
     try {
-      const usuario = await usersController.getUserAndValidatePassword(dni, password);
+      const usuario = await usersController.getUserAndValidatePassword(documento, password);
 
-      // Crear token JWT
-      const token = jwt.sign({ id_usuario: usuario.id, id_rol: usuario.id_rol }, secretKey, { expiresIn: '7d' });
+      // Crear token JWT incluyendo todos los roles
+      const token = jwt.sign({ id_usuario: usuario.id, roles: usuario.roles }, secretKey, { expiresIn: '7d' });
 
       // Enviar el token en una cookie HTTP-only y segura
       res.cookie('token', token, {
@@ -27,8 +27,7 @@ module.exports = {
         userData: {
           id_usuario: usuario.id,
           usuario: usuario.usuario,
-          id_rol: usuario.id_rol,
-          rol: usuario.rol,
+          roles: usuario.roles, // Incluyendo todos los roles
           nombre_completo: usuario.nombre_completo
         },
       });

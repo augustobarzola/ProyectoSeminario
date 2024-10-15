@@ -3,11 +3,11 @@ import axios from 'axios';
 const apiUrl = process.env.REACT_APP_URL_API;
 
 // Método para iniciar sesión
-export const login = async (dni, password) => {
+export const login = async (documento, password) => {
   try {
     const url = `${apiUrl}/api/auth/login`;
 
-    const response = await axios.post(url, { dni, password }, { withCredentials: true });
+    const response = await axios.post(url, { documento, password }, { withCredentials: true });
 
     if (response.status === 200) {
       const data = response.data;

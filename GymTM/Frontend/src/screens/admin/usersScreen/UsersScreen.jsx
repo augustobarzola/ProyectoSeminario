@@ -26,7 +26,7 @@ const UsersScreen = () => {
   const initialFormState = {
     nombre: '',
     apellido: '',
-    dni: '',
+    documento: '',
     sexo: '',
     correo: '',
     telefono: '',
@@ -69,11 +69,11 @@ const UsersScreen = () => {
       }
     };
 
-  // Filtrar usuarios por Documento
+  // Filtrar usuarios por Documento o Nombre
   const handleSearch = (e) => {
-    const dni = e.target.value;
-    if (dni) {
-      const results = users.filter(user => user.dni.includes(dni));
+    const text = e.target.value;
+    if (text) {
+      const results = users.filter(user => user.documento.includes(text) || user.apellido.includes(text) || user.nombre.includes(text));
       setFilteredUsers(results);
     } else {
       setFilteredUsers(users);
@@ -142,7 +142,7 @@ const UsersScreen = () => {
         <>
           <h3 className="text-center">Lista de Usuarios</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar por Documento" onChange={handleSearch} />
+            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar por Documento/Nombre" onChange={handleSearch} />
             <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Agregar usuario'}</Button>
           </div>
           <Table striped bordered hover variant="dark" className='m-0 custom-border' responsive>
@@ -151,17 +151,17 @@ const UsersScreen = () => {
                 <th>Nombre</th>
                 <th>Documento</th>
                 <th>Correo</th>
-                <th>Rol</th>
+                <th>Roles</th>
                 <th>Fecha Alta</th>
                 <th>Fecha Baja</th>
-                <th className="">Acciones</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filteredUsers?.map(user => (
                 <tr key={user.id}>
-                  <td>{user.nombre} {user.apellido}</td>
-                  <td>{user.dni}</td>
+                  <td>{user.apellido}, {user.nombre}</td>
+                  <td>{user.documento}</td>
                   <td>{user.correo}</td>
                   <td>{user.rol}</td>
                   <td>{user.fecha_alta}</td>
@@ -205,9 +205,9 @@ const UsersScreen = () => {
             />
             <CustomFormInput
               label="Documento"
-              controlId="dni"
+              controlId="documento"
               register={register}
-              errors={errors.dni}
+              errors={errors.documento}
               option={mode}
               disabled={mode === 'M'}
             />

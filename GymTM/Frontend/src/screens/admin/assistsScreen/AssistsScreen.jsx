@@ -18,8 +18,9 @@ const AsistenciasScreen = () => {
     reset,
     formState: { errors },
   } = useForm();
+  const openConfirmationModal = useConfirmationModal();
 
-  const initialFormState = { dni: "" }; // Formulario solo para ingresar el Documento del cliente
+  const initialFormState = { documento: "" }; // Formulario solo para ingresar el Documento del cliente
 
   useEffect(() => {
     fetchAsistencias(); // Obtener asistencias al cargar el componente
@@ -51,15 +52,23 @@ const AsistenciasScreen = () => {
   };
 
   const handleDelete = async (id) => {
-    //useConfirmationModal();
-    try {
-      await deleteData("asistencias", id);
-      toast.success("Asistencia eliminada exitosamente");
-      fetchAsistencias(); // Refrescar la lista de asistencias
-      reset(initialFormState);
-    } catch (error) {
-      showErrorMessage("Error al eliminar la asistencia", error);
+    const deleteAsistencia = async () => {
+      try {
+        await deleteData("asistencias", id);
+        toast.success("Asistencia eliminada exitosamente");
+        fetchAsistencias(); // Refrescar la lista de asistencias
+        reset(initialFormState);
+      } catch (error) {
+        showErrorMessage("Error al eliminar la asistencia", error);
+      }
     }
+
+    openConfirmationModal({
+      title: 'Eliminar Asistencia',
+      message: '¿Estás seguro de que deseas eliminar esta asistencia?',
+      onConfirm: deleteAsistencia
+    });
+    
   };
 
   return (
@@ -69,9 +78,9 @@ const AsistenciasScreen = () => {
       <Form onSubmit={handleSubmit(onSubmit)} className="mb-3">
         <CustomFormInput
           label="Documento del Cliente"
-          controlId="dni"
+          controlId="documento"
           register={register}
-          errors={errors.dni}
+          errors={errors.documento}
           option="A"
           required
         />
@@ -105,7 +114,7 @@ const AsistenciasScreen = () => {
           {asistencias.map((asistencia) => {
             return (
               <tr key={asistencia.id_asistencia}>
-                <td>{asistencia?.dni}</td>
+                <td>{asistencia?.documento}</td>
                 <td>{asistencia?.nombre_cliente}</td>
                 <td>{asistencia?.nombre_recepcionista}</td>
                 <td>{asistencia?.fecha_ingreso}</td>

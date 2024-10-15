@@ -5,6 +5,7 @@ import NotFoundScreen from '../../../screens/notFoundScreen/NotFoundScreen';
 import { getUserData } from '../../../services/authService';
 import './Main.css';
 import { getAccessibleRoutes } from '../../../routes/accesibleRoutes';
+import RoleSelectionScreen from '../../../screens/roleSelectionScreen/RoleSelectionScreen';
 
 const Main = () => {
   const location = useLocation();
@@ -33,6 +34,7 @@ const Main = () => {
               element={route.element}
             />
           ))}
+          <Route path="/seleccionRol" element={<RoleSelectionScreen roles={user.roles} />} />
           {/* Ruta de fallback para páginas no encontradas */}
           <Route path="*" element={<NotFoundScreen />} />
         </Routes>

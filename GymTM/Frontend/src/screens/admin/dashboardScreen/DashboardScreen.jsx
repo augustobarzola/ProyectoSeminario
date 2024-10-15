@@ -83,7 +83,7 @@ const DashboardScreen = () => {
           >
             <thead>
               <tr>
-                <th>DNI</th>
+                <th>Documento</th>
                 <th>Nombre del Cliente</th>
                 <th>Fecha de Ingreso</th>
               </tr>
@@ -91,7 +91,7 @@ const DashboardScreen = () => {
             <tbody>
               {asistencias.slice(0 - 10).map((assist) => (
                 <tr key={assist.id_asistencia}>
-                  <td>{assist.dni}</td>
+                  <td>{assist.documento}</td>
                   <td>{assist.nombre_cliente}</td>
                   <td>{assist.fecha_ingreso}</td>
                 </tr>

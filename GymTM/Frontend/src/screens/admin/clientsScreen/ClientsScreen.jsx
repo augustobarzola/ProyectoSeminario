@@ -29,7 +29,7 @@ const ClientsScreen = () => {
   const initialFormState = {
     nombre: '',
     apellido: '',
-    dni: '',
+    documento: '',
     sexo: '',
     correo: '',
     telefono: '',
@@ -66,11 +66,11 @@ const ClientsScreen = () => {
     }
   };
 
-  // Filtrar clientes por Documento
+  // Filtrar clientes por Documento o Nombre
   const handleSearch = (e) => {
-    const dni = e.target.value;
-    if (dni) {
-      const results = clients.filter(client => client.dni.includes(dni));
+    const text = e.target.value;
+    if (text) {
+      const results = clients.filter(client => client.documento.includes(text) || client.apellido.includes(text) || client.nombre.includes(text));
       setFilteredClients(results);
     } else {
       setFilteredClients(clients);
@@ -143,7 +143,7 @@ const ClientsScreen = () => {
         <>
           <h3 className="text-center">Lista de Clientes y Asignacion de Planes de Pago</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar " onChange={handleSearch} />
+            <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar por Documento/Nombre" onChange={handleSearch} />
             {(user?.id_rol === 1 || user?.id_rol === 2) && <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Agregar cliente'}</Button>}
           </div>
           <Table striped bordered hover variant="dark" className='m-0 custom-border' responsive>
@@ -156,14 +156,14 @@ const ClientsScreen = () => {
                 <th>Plan Pago</th>
                 <th>Fecha Alta</th>
                 <th>Fecha Baja</th>
-                <th className="">Acciones</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filteredClients?.map(client => (
                 <tr key={client.id}>
-                  <td>{client.nombre}, {client.apellido}</td>
-                  <td>{client.dni}</td>
+                  <td>{client.apellido}, {client.nombre}</td>
+                  <td>{client.documento}</td>
                   <td>{client.sexo}</td>
                   <td>{calcularEdad(client.fecha_nacimiento)}</td>
                   <td>{client.plan}</td>
@@ -213,9 +213,9 @@ const ClientsScreen = () => {
             />
             <CustomFormInput
               label="Documento"
-              controlId="dni"
+              controlId="documento"
               register={register}
-              errors={errors.dni}
+              errors={errors.documento}
               option={mode}
               disabled={mode === 'C' || mode === 'M'}
             />
