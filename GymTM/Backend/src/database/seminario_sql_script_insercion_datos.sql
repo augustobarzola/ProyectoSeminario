@@ -31,8 +31,8 @@ VALUES
 -- Insertar los roles de los usuarios
 INSERT INTO usuarios_roles (id_usuario, id_rol)
 VALUES 
-(1, 1),  -- Administrador
-(2, 2),  -- Administrador
+(1, 1),  -- Administrador de Sistemas
+(2, 2),  -- Administrador de Gimnasio
 (3, 3),  -- Recepcionista
 (3, 4),  -- Recepcionista y Entrenador
 (3, 5),  -- Recepcionista y Entrenador y Cliente
