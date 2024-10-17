@@ -8,7 +8,7 @@ module.exports = {
     const [rows] = await db.query(`
       SELECT u.*, 
              CONCAT(p.nombre, ', ', p.apellido) AS nombre_completo, 
-             JSON_ARRAYAGG(JSON_OBJECT('id', r.id, 'nombre', r.nombre)) AS roles,
+             JSON_ARRAYAGG(JSON_OBJECT('id', r.id, 'nombre', r.nombre, 'descripcion', r.descripcion)) AS roles,
              u.fecha_baja 
       FROM usuarios u 
       LEFT JOIN personas p ON u.id = p.id_usuario 
@@ -113,24 +113,26 @@ module.exports = {
 
   getAllUsers: async (req, res) => {
     try {
-      const [userRows] = await db.query('SELECT * FROM usuarios');
-  
-      const usersWithDetails = await Promise.all(userRows.map(async (usuario) => {
-        const [personasRows] = await db.query('SELECT * FROM personas WHERE id_usuario = ?', [usuario.id]);
-        const [rolesRows] = await db.query('SELECT r.nombre AS rol FROM roles r INNER JOIN usuarios_roles ur ON r.id = ur.id_rol WHERE ur.id_usuario = ?', [usuario.id]);
-        const [especialidadesRows] = await db.query('SELECT e.nombre AS especialidad FROM especialidades e INNER JOIN usuarios_especialidades ue ON e.id = ue.id_especialidad WHERE ue.id_usuario = ?', [usuario.id]);
-
-        const { contrasenia, ...usuarioSinContrasenia } = usuario;
-  
-        return {
-          ...usuarioSinContrasenia,
-          ...personasRows[0],
-          roles: rolesRows.map(row => row.rol),
-          especialidades: especialidadesRows.map(row => row.especialidad)
-        };
-      }));
-  
-      const usersWithDetailsFormatted = usersWithDetails.map(user => ({
+      const [userRows] = await db.query(`
+        SELECT u.*, 
+              p.*,  
+              JSON_ARRAYAGG( JSON_OBJECT('id', r.id, 'nombre', r.nombre)) AS roles,
+              CASE 
+                  WHEN COUNT(e.id) > 0 THEN JSON_ARRAYAGG( JSON_OBJECT('id', e.id, 'nombre', e.nombre, 'descripcion', r.descripcion)) 
+                  ELSE null 
+              END AS especialidades,
+              u.fecha_baja 
+        FROM usuarios u 
+        LEFT JOIN personas p ON u.id = p.id_usuario 
+        LEFT JOIN usuarios_roles ur ON u.id = ur.id_usuario
+        LEFT JOIN roles r ON r.id = ur.id_rol
+        LEFT JOIN usuarios_especialidades ue ON u.id = ue.id_usuario
+        LEFT JOIN especialidades e ON e.id = ue.id_especialidad
+        GROUP BY u.id;
+      `);
+      
+      // Formatear las fechas
+      const usersWithDetailsFormatted = userRows.map(user => ({
         ...user,
         fecha_nacimiento: user.fecha_nacimiento ? convertToDisplayDate(user.fecha_nacimiento) : null,
         fecha_alta: user.fecha_alta ? convertToDisplayDate(user.fecha_alta) : null,
@@ -142,45 +144,49 @@ module.exports = {
       console.error('Error al obtener todos los usuarios:', error);
       return res.status(500).json({ success: false, message: 'Error en el servidor' });
     }
-  },
+  },  
   
   getUserById: async (req, res) => {
     const userId = req.params.id;
   
     try {
-      const [userRows] = await db.query('SELECT * FROM usuarios WHERE id = ?', [userId]);
+      const [userRows] = await db.query(`
+        SELECT u.*, 
+              p.*,  
+              JSON_ARRAYAGG( JSON_OBJECT('id', r.id, 'nombre', r.nombre, 'descripcion', r.descripcion)) AS roles,
+              CASE 
+                  WHEN COUNT(e.id) > 0 THEN JSON_ARRAYAGG( JSON_OBJECT('id', e.id, 'nombre', e.nombre)) 
+                  ELSE null 
+              END AS especialidades,
+              u.fecha_baja 
+        FROM usuarios u 
+        LEFT JOIN personas p ON u.id = p.id_usuario 
+        LEFT JOIN usuarios_roles ur ON u.id = ur.id_usuario
+        LEFT JOIN roles r ON r.id = ur.id_rol
+        LEFT JOIN usuarios_especialidades ue ON u.id = ue.id_usuario
+        LEFT JOIN especialidades e ON e.id = ue.id_especialidad
+        WHERE u.id = ?
+        GROUP BY u.id;
+      `, [userId]);
   
       if (userRows.length === 0) {
         return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
       }
   
       const usuario = userRows[0];
-      const { contrasenia, ...usuarioSinContrasenia } = usuario;
-  
-      const [personasRows] = await db.query('SELECT * FROM personas WHERE id_usuario = ?', [usuario.id]);
-      const [rolesRows] = await db.query('SELECT r.nombre AS rol FROM roles r INNER JOIN usuarios_roles ur ON r.id = ur.id_rol WHERE ur.id_usuario = ?', [usuario.id]);
-      const [especialidadesRows] = await db.query('SELECT e.nombre AS especialidad FROM especialidades e INNER JOIN usuarios_especialidades ue ON e.id = ue.id_especialidad WHERE ue.id_usuario = ?', [usuario.id]);
-  
-      const user = {
-        ...usuarioSinContrasenia,
-        ...personasRows[0],
-        roles: rolesRows.map(row => row.rol),
-        especialidades: especialidadesRows.map(row => row.especialidad)
-      };
-
       const userFormatted = {
-        ...user,
-        fecha_nacimiento: user.fecha_nacimiento ? convertToDisplayDate(user.fecha_nacimiento) : null,
-        fecha_alta: user.fecha_alta ? convertToDisplayDate(user.fecha_alta) : null,
-        fecha_baja: user.fecha_baja ? convertToDisplayDate(user.fecha_baja) : null,
+        ...usuario,
+        fecha_nacimiento: usuario.fecha_nacimiento ? convertToDisplayDate(usuario.fecha_nacimiento) : null,
+        fecha_alta: usuario.fecha_alta ? convertToDisplayDate(usuario.fecha_alta) : null,
+        fecha_baja: usuario.fecha_baja ? convertToDisplayDate(usuario.fecha_baja) : null,
       };
-
+  
       return res.json(userFormatted);
     } catch (error) {
       console.error('Error al obtener el usuario:', error);
       return res.status(500).json({ success: false, message: 'Error en el servidor' });
     }
-  },
+  },  
 
   toggleUserStatusLogic: async (userId) => {
     // Validar que el ID de usuario sea válido

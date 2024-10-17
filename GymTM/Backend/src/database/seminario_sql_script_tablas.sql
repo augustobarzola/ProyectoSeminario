@@ -30,7 +30,7 @@ CREATE TABLE gimnasios (
 
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario VARCHAR(12) NOT NULL,
+    usuario VARCHAR(12) NOT NULL UNIQUE,
     contrasenia VARCHAR(255) NOT NULL,
     fecha_alta DATE NOT NULL,
     fecha_baja DATE,

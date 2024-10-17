@@ -82,7 +82,7 @@ module.exports = {
 
       // Buscar al cliente por documento
       const [client] = await db.query(
-        "SELECT * FROM usuarios WHERE usuario = ? AND id_rol = 4",
+        "SELECT * FROM usuarios WHERE usuario = ? AND id_rol = 5",
         [documento]
       );
 

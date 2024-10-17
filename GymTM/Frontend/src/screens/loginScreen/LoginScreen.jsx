@@ -19,9 +19,9 @@ const Login = () => {
     setLoginError(null); // Resetear mensaje de error
     const result = await handleLogin(data.documento, data.password);
     if (result.success) {
-      if (result.userData.roles.length > 1) {
+      if (result.userData?.roles?.length > 1) {
         // Redirigir a la pantalla de selección de rol si hay más de un rol
-        navigate('/seleccionRol', { state: { roles: result.userData.roles } }); 
+        navigate('/seleccionRol'); 
       } else {
         navigate('/'); // Redirige al usuario al inicio si solo tiene un rol
       }

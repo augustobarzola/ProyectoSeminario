@@ -20,27 +20,42 @@ const RedirectBasedOnRole = () => {
     fetchUserData();
   }, []);
 
+  useEffect(() => {
+    if (user?.roles?.length === 1) {
+      setCurrentRole(user.roles[0]); // Actualiza el rol si solo tiene uno
+    }
+  }, [user, setCurrentRole]);
+
   if (loading) {
     return <CustomSpinner />;
   }
 
-  // Si el usuario tiene múltiples roles
-  if (user?.roles?.length > 1) {
-    return <RoleSelectionScreen roles={user.roles} />;
-  }
+  // Función para manejar la redirección
+  const getRedirectPath = () => {
+    if (isAdminLoggedIn && user?.roles?.length > 1 && !user.id_rol) {
+      return <RoleSelectionScreen />;
+    }
 
-  // Si el usuario tiene un solo rol
-  if (user?.roles[0]?.id_rol === 3) {
-    setCurrentRole('admin');
-    return <Navigate to="/admin/rutinas" />;
-  } else if (isAdminLoggedIn) {
-    setCurrentRole('admin');
-    return <Navigate to="/admin" />;
-  } else if (isClientLoggedIn) {
-    return <Navigate to="/" />;
-  } else {
+    if (isAdminLoggedIn && (!user.id_rol || user.id_rol === 1)) {
+      return <Navigate to="/admin" />;
+    }
+
+    if (isAdminLoggedIn && (!user.id_rol || user.id_rol === 2)) {
+      return <Navigate to="/admin/asistencias" />;
+    }
+
+    if (isAdminLoggedIn && (!user.id_rol || user.id_rol == 3)) {
+      return <Navigate to="/admin/rutinas" />;
+    }
+
+    if (isClientLoggedIn && (!user.id_rol || user.id_rol === 4)) {
+      return <Navigate to="/" />;
+    }
+    
     return <LoginScreen />;
-  }
+  };
+
+  return getRedirectPath();
 };
 
 export default RedirectBasedOnRole;

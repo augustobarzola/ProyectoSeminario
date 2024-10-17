@@ -16,7 +16,6 @@ const Main = () => {
   }, [location]);
 
   // Función para filtrar las rutas según el rol del usuario
-
   const accessibleRoutes = user ? getAccessibleRoutes(user.id_rol) : [];
 
   return (

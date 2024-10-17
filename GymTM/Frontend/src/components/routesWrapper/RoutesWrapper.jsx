@@ -9,6 +9,7 @@ import AdminHeader from '../admin/header/Header';
 import AdminMain from '../admin/main/Main';
 import AdminFooter from '../admin/footer/Footer';
 import RedirectBasedOnRole from '../redirectBasedOnRole/RedirectBasedOnRole';
+import RoleSelectionScreen from '../../screens/roleSelectionScreen/RoleSelectionScreen';
 
 // Layouts
 const AdminLayout = () => (
@@ -32,6 +33,7 @@ const RoutesWrapper = () => {
     <Routes>
       {/* Rutas */}
       <Route path="/login" element={<RedirectBasedOnRole />} />
+      <Route path="/seleccionRol" element={<RoleSelectionScreen />} />
       <Route
         path="/admin/*"
         element={

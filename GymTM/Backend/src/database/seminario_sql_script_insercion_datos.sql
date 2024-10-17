@@ -13,7 +13,8 @@ VALUES
 -- Insertar roles
 INSERT INTO roles (nombre, descripcion, fecha_alta, fecha_baja)
 VALUES 
-('Administrador', 'Acceso completo al sistema', '2024-01-01', NULL),
+('Administrador de Sistemas', 'Gestión de usuarios de gimnasios y gimnasios', '2024-01-01', NULL),
+('Administrador de Gimnasio', 'Acceso completo al sistema', '2024-01-01', NULL),
 ('Recepcionista', 'Gestión de clientes y pagos', '2024-01-01', NULL),
 ('Entrenador', 'Gestión de rutinas y clientes', '2024-01-01', NULL),
 ('Cliente', 'Acceso limitado como cliente', '2024-01-01', NULL);

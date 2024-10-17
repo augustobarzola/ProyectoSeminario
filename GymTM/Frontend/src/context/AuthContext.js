@@ -18,9 +18,9 @@ export const AuthProvider = ({ children }) => {
         const user = await getUserData();
         if (user) {
           setUserRoles(user.roles || []); // Guardar los roles del usuario
-          setCurrentRole(user.roles?.length === 1 ? user.roles[0].nombre_rol : null); // Si solo hay un rol, seleccionarlo automáticamente
-          setIsAdminLoggedIn(user.roles.some(role => role.id_rol !== 4)); // Revisar si hay rol de admin
-          setIsClientLoggedIn(user.roles.some(role => role.id_rol === 4)); // Revisar si hay rol de cliente
+          setCurrentRole(user.roles?.length === 1 ? user.roles[0].nombre : null); // Si solo hay un rol, seleccionarlo automáticamente
+          setIsAdminLoggedIn(user.roles.some(role => role.id !== 4)); // Revisar si hay rol de admin
+          setIsClientLoggedIn(user.roles.some(role => role.id === 4)); // Revisar si hay rol de cliente
         } else {
           setUserRoles([]);
           setCurrentRole(null);
@@ -45,9 +45,9 @@ export const AuthProvider = ({ children }) => {
       const user = await getUserData();
       if (user) {
         setUserRoles(user.roles || []);
-        setCurrentRole(user.roles?.length === 1 ? user.roles[0].nombre_rol : null);
-        setIsAdminLoggedIn(user.roles.some(role => role.id_rol !== 4));
-        setIsClientLoggedIn(user.roles.some(role => role.id_rol === 4));
+        setCurrentRole(user.roles?.length === 1 ? user.roles[0].nombre : null);
+        setIsAdminLoggedIn(user.roles.some(role => role.id !== 4));
+        setIsClientLoggedIn(user.roles.some(role => role.id === 4));
       }
       return { success: true, userData: user };
     }

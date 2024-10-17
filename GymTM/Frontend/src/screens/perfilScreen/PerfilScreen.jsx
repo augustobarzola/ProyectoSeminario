@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import showErrorMessage from '../../utils/showErrorMessage';
+import { getUserData } from '../../services/authService';
 
 const PerfilScreen = () => {
   const [mode, setMode] = useState('C'); // Modo inicial: Consulta
@@ -34,12 +35,13 @@ const PerfilScreen = () => {
   const fetchUserProfile = async () => {
     setIsLoading(true);
     try {
-      const userData = localStorage.getItem('userData'); 
-      const userId = JSON.parse(userData).id_usuario;
+      const userData = getUserData();
+      const userId = userData.id_usuario;
 
       const response = await getData(`usuarios/${userId}`);
-      setUserData(response);
-      reset(response);
+      const user = {...response, id_rol: userData.id_rol, rol: userData.rol};
+      setUserData(user);
+      reset(user);
     } catch (error) {
       showErrorMessage('Error al obtener datos del usuario', error);
     } finally {

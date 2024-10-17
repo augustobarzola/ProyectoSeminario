@@ -12,9 +12,16 @@ export const login = async (documento, password) => {
     if (response.status === 200) {
       const data = response.data;
       if (data && data.userData) {
-        // Guardar los datos del usuario en el localStorage (ya no guardas el token)
+        const roles = data.userData.roles;
+
+        if (roles && roles.length === 1) {
+          // Si tiene un solo rol, seleccionarlo automáticamente
+          localStorage.setItem('selectedRole', JSON.stringify(roles[0]));
+        }
+
         localStorage.setItem('userData', JSON.stringify(data.userData)); // Guardar los datos del usuario
-        return { success: true };
+
+        return { success: true, userData: data.userData };
       } else {
         return { success: false, message: 'Error en la autenticación.' };
       }
@@ -33,6 +40,7 @@ export const logout = async () => {
     // Realizar una solicitud al backend para destruir la sesión/cookie
     await axios.post(`${apiUrl}/api/auth/logout`, {}, { withCredentials: true });
 
+    localStorage.removeItem('selectedRole');
     localStorage.removeItem('userData'); // Elimina los datos del usuario del almacenamiento
   } catch (error) {
     console.error('Error al cerrar sesión:', error.message);
@@ -47,7 +55,25 @@ export const isAuthenticated = () => {
 // Método para obtener los datos del usuario logueado desde el localStorage
 export const getUserData = () => {
   const userData = localStorage.getItem('userData');
-  return userData ? JSON.parse(userData) : null; // Retorna los datos del usuario o null si no existen
+  const selectedRole = localStorage.getItem('selectedRole');
+  
+  if (!userData) {
+    return null; // Retorna null si no hay datos del usuario
+  }
+
+  const parsedUserData = JSON.parse(userData); // Los datos del usuario
+
+  // Si hay un rol seleccionado, agrega sus propiedades; de lo contrario, solo retorna los datos del usuario
+  if (selectedRole) {
+    const parsedSelectedRole = JSON.parse(selectedRole);
+    return {
+      ...parsedUserData,
+      id_rol: parsedSelectedRole.id, // Solo el rol seleccionado
+      rol: parsedSelectedRole.nombre, // Solo el rol seleccionado
+    };
+  }
+
+  return parsedUserData; // Retorna solo los datos del usuario si no hay rol seleccionado
 };
 
 // Método para obtener el perfil del usuario logueado desde el backend
@@ -64,5 +90,12 @@ export const getLoggedUser = async () => {
   } catch (error) {
     console.error('Error al obtener el perfil del usuario:', error.message);
     throw error;
+  }
+};
+
+// Método para actualizar el perfil del usuario logueado
+export const setSelectedRole = (role) => {
+  if (role) {
+    localStorage.setItem('selectedRole', JSON.stringify(role));
   }
 };
