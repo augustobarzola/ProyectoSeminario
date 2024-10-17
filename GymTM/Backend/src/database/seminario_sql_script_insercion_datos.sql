@@ -43,10 +43,11 @@ VALUES
 -- Insertar personas
 INSERT INTO personas (id_usuario, documento, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono)
 VALUES 
-(1, '12345678', 'Masculino', 'Admin', 'Admin', '1980-01-01', 1, 'admin@gimnasiocentral.com', '3512345678'),
-(2, '23456789', 'Masculino', 'Carlos', 'Lopez', '1985-04-10', 1, 'recepcionista@gimnasiocentral.com', '3512345679'),
-(3, '34567890', 'Femenino', 'Maria', 'Gonzalez', '1990-05-15', 1, 'maria@gimnasiocentral.com', '3512345680'),
-(4, '45678901', 'Masculino', 'Juan', 'Sanchez', '1995-06-20', 2, 'juan@gimnasionorte.com', '3519876543');
+(1, '12345678', 'Masculino', 'Sistemas', 'Sistemas', '2020-01-01', 1, 'sistemas@sistemas.com', '3512345678'),
+(2, '23456789', 'Masculino', 'Admin', 'Admin', '1980-01-01', 1, 'admin@gimnasiocentral.com', '3512345678'),
+(3, '34567890', 'Masculino', 'Carlos', 'Lopez', '1985-04-10', 1, 'recepcionista@gimnasiocentral.com', '3512345679'),
+(4, '45678901', 'Femenino', 'Maria', 'Gonzalez', '1990-05-15', 1, 'maria@gimnasiocentral.com', '3512345680'),
+(5, '56789012', 'Masculino', 'Juan', 'Sanchez', '1995-06-20', 2, 'juan@gimnasionorte.com', '3519876543');
 
 INSERT INTO especialidades (nombre, descripcion, id_gimnasio)
 VALUES 
