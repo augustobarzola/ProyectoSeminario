@@ -41,14 +41,18 @@ const RedirectBasedOnRole = () => {
     }
 
     if (isAdminLoggedIn && (!user.id_rol || user.id_rol === 2)) {
+      return <Navigate to="/admin" />;
+    }
+
+    if (isAdminLoggedIn && (!user.id_rol || user.id_rol === 3)) {
       return <Navigate to="/admin/asistencias" />;
     }
 
-    if (isAdminLoggedIn && (!user.id_rol || user.id_rol == 3)) {
+    if (isAdminLoggedIn && (!user.id_rol || user.id_rol == 4)) {
       return <Navigate to="/admin/rutinas" />;
     }
 
-    if (isClientLoggedIn && (!user.id_rol || user.id_rol === 4)) {
+    if (isClientLoggedIn && (!user.id_rol || user.id_rol === 5)) {
       return <Navigate to="/" />;
     }
     
