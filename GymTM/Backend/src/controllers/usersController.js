@@ -18,7 +18,7 @@ module.exports = {
       GROUP BY u.id`, 
       [usuario]
     );    
-  
+    
     if (rows.length === 0) {
       throw new Error('Usuario/contraseña incorrectos');
     }

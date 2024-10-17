@@ -22,19 +22,23 @@ VALUES
 -- Insertar usuarios
 INSERT INTO usuarios (usuario, contrasenia, fecha_alta, fecha_baja, id_gimnasio)
 VALUES 
-('12345678', '$2b$10$2rSQgTAAIXOcoCqUR4DRd.CIPbvi4e8eKyOMxMSzRbbEGB11pQJiS', '2024-01-01', NULL, 1),  -- Administrador Gimnasio Central
-('23456789', '$2b$10$CmERQrTHyUKMYWX0ISdUm.kf6OxQafy/bpnXwPbCJ6.Qoz1GAbksu', '2024-01-02', NULL, 1),  -- Recepcionista Gimnasio Central
-('34567890', '$2b$10$a.ukggczQr7O/E5l9gBTeuJC02Jo0W3xXiJZRghVJZlWR0Z8txpYS', '2024-01-02', NULL, 1),  -- Entrenador Gimnasio Central
-('45678901', '$2b$10$XvOhQA1TpvXQV3HoatDz1uuR5zbtjwER1aQzOp39YmiPK9obP8k0i', '2024-01-03', NULL, 2);  -- Cliente Gimnasio Norte
+('12345678', '$2b$10$2rSQgTAAIXOcoCqUR4DRd.CIPbvi4e8eKyOMxMSzRbbEGB11pQJiS', '2024-01-01', NULL, NULL),  -- Administrador Sistemas
+('23456789', '$2b$10$CmERQrTHyUKMYWX0ISdUm.kf6OxQafy/bpnXwPbCJ6.Qoz1GAbksu', '2024-01-02', NULL, 1),  -- Administrador Gimnasio Central
+('34567890', '$2b$10$a.ukggczQr7O/E5l9gBTeuJC02Jo0W3xXiJZRghVJZlWR0Z8txpYS', '2024-01-02', NULL, 1),  -- Recepcionista Gimnasio Central
+('45678901', '$2b$10$XvOhQA1TpvXQV3HoatDz1uuR5zbtjwER1aQzOp39YmiPK9obP8k0i', '2024-01-03', NULL, 1),  -- Entrenador Gimnasio Central
+('56789012', '$2b$10$DJ6Qtbthh7Pj/3SEbms8Vu/HziIvwdh4OJPZZoUgi5GyctfCN0Umq', '2024-01-03', NULL, 1);  -- Cliente Gimnasio Central
 
 -- Insertar los roles de los usuarios
 INSERT INTO usuarios_roles (id_usuario, id_rol)
 VALUES 
 (1, 1),  -- Administrador
-(2, 2),  -- Recepcionista
-(2, 4),  -- Recepcionista y Cliente
-(3, 3),  -- Entrenador
-(4, 4);  -- Cliente
+(2, 2),  -- Administrador
+(3, 3),  -- Recepcionista
+(3, 4),  -- Recepcionista y Entrenador
+(3, 5),  -- Recepcionista y Entrenador y Cliente
+(4, 4),  -- Entrenador
+(4, 5),  -- Entrenador y Cliente
+(5, 5);  -- Cliente
 
 -- Insertar personas
 INSERT INTO personas (id_usuario, documento, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono)

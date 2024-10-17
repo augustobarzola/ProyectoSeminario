@@ -7,9 +7,9 @@ export const getAccessibleRoutes = (id_rol) => {
       return [];
     case 2: // Administrador de Gimnasio
       return adminRoutes; // Acceso completo
-    case 2: // Recepcionista
+    case 3: // Recepcionista
       return adminRoutes.filter(route => route.path === '/clientes' || route.path === '/planes' || route.path === '/asistencias' || route.path === '/entrenadores' || route.path === '/perfil');
-    case 3: // Entrenador
+    case 4: // Entrenador
       return adminRoutes.filter(route => route.path === '/rutinas' || route.path === '/clientes' || route.path === '/perfil');
     case 5: // Cliente
       return clientRoutes;
