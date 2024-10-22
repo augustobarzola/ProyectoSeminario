@@ -2,6 +2,7 @@
 const convertToISODate = (date) => {
   if (!date || typeof date !== 'string') return date; // Si no es un string, retornamos el valor sin cambiar
   const [day, month, year] = date.split('/');
+  console.log(year+"-"+month+"-"+day);
   return `${year}-${month}-${day}`;
 };
 

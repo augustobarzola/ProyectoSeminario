@@ -3,28 +3,44 @@ const { convertToISODate, convertToDisplayDate } = require('../helpers/utils');
 const usersController = require('./usersController');
 
 module.exports = {
-  getAllClients: async (req, res) => {
-    try {
-      const [clientes] = await db.query('SELECT * FROM usuarios u LEFT JOIN personas p ON p.id_usuario = u.id WHERE u.id_rol = 5');
-      
-      // Convertir fechas a formato dd/mm/yyyy antes de devolver
-      const clientesFormatted = clientes.map(cliente => ({
-        ...cliente,
-        fecha_nacimiento: cliente.fecha_nacimiento ? convertToDisplayDate(cliente.fecha_nacimiento) : null,
-        fecha_alta: cliente.fecha_alta ? convertToDisplayDate(cliente.fecha_alta) : null,
-        fecha_baja: cliente.fecha_baja ? convertToDisplayDate(cliente.fecha_baja) : null,
-      }));
 
-      res.json(clientesFormatted);
-    } catch (error) {
-      res.status(500).json({ error: 'Error al obtener los clientes.' });
-    }
-  },
+    getAllClients: async (req, res) => {
+      try {
+        const [clientes] = await db.query(`
+         SELECT u.*, p.*, d.*, pp.nombre as plan
+          FROM usuarios u
+          LEFT JOIN personas p ON p.id_usuario = u.id
+          LEFT JOIN domicilios d ON p.id_domicilio = d.id
+          JOIN usuarios_roles ur ON ur.id_usuario = u.id
+          LEFT JOIN clientes_planes_pago cpp ON cpp.id_cliente = p.id_usuario
+          LEFT JOIN planes_pago pp ON pp.id = cpp.id_plan_pago
+          WHERE ur.id_rol = 5
+        `);
+    
+        // Convertir fechas a formato dd/mm/yyyy antes de devolver
+        const clientesFormatted = clientes.map(cliente => ({
+          ...cliente,
+          nombre: cliente.nombre,
+          apellido: cliente.apellido,
+
+          fecha_nacimiento: cliente.fecha_nacimiento ? convertToDisplayDate(cliente.fecha_nacimiento) : null,
+          fecha_alta: cliente.fecha_alta ? convertToDisplayDate(cliente.fecha_alta) : null,
+          fecha_baja: cliente.fecha_baja ? convertToDisplayDate(cliente.fecha_baja) : null,
+          plan:cliente.plan
+        })
+      
+      );
+     
+        res.json(clientesFormatted);
+      } catch (error) {
+        res.status(500).json({ error: 'Error al obtener los clientes.' });
+      }
+    },
 
   getClientById: async (req, res) => {
     try {
       const clientId = req.params.id;
-      const [client] = await db.query('SELECT * FROM usuarios u LEFT JOIN personas p ON p.id_usuario = u.id LEFT JOIN domicilios d ON d.id = p.id_domicilio WHERE u.id = ? AND u.id_rol = 5', [clientId]);
+      const [client] = await db.query('SELECT * FROM usuarios u LEFT JOIN personas p ON p.id_usuario = u.id LEFT JOIN domicilios d ON d.id = p.id_domicilio JOIN usuarios_roles ur ON ur.id_usuario=u.id WHERE u.id = ? AND u.id_rol = 5', [clientId]);
 
       if (client.length === 0) {
         return res.status(404).json({ error: 'Cliente no encontrado.' });
@@ -58,9 +74,11 @@ module.exports = {
 
       // Convertir fecha de nacimiento a formato ISO
       const fechaNacimientoISO = fecha_nacimiento ? convertToISODate(fecha_nacimiento) : null;
-
+      
       // 1. Insertar usuario a través del controlador de usuarios
-      const id_usuario = await usersController.createUserLogic(documento, documento, 4, documento, sexo, nombre, apellido, correo, telefono);
+      const id_usuario = await usersController.createUserLogic(documento, documento, 5, documento, sexo, nombre, apellido, correo, telefono);
+
+     
 
       let id_domicilio;
 
@@ -75,8 +93,9 @@ module.exports = {
 
       // 3. Insertar cliente
       await connection.query(
-        'INSERT INTO personas (id_usuario, documento, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+       'INSERT INTO personas (id_usuario, documento, sexo, nombre, apellido, fecha_nacimiento, id_domicilio, correo, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
         [id_usuario, documento, sexo, nombre, apellido, fechaNacimientoISO, id_domicilio, correo, telefono]
+        
       );
 
       await connection.commit();
@@ -85,7 +104,12 @@ module.exports = {
     } catch (error) {
       await connection.rollback();
       console.error(error);
+      if(error.message.includes("Duplicate")){
+        res.status(409).json({ success: false, message: 'Error: El documento ya está registrado.' });
+      }
+      else{
       res.status(500).json({ error: 'Error al crear el cliente.' });
+      }
     } finally {
       connection.release();
     }
