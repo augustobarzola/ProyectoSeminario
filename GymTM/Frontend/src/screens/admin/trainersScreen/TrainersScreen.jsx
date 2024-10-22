@@ -15,6 +15,7 @@ import { getUserData } from '../../../services/authService';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import showErrorMessage from '../../../utils/showErrorMessage';
 
+
 const TrainersScreen = () => {
   const [mode, setMode] = useState('L'); // Modo inicial: Lista
   const [trainers, setTrainers] = useState([]); // Lista de entrenadores
@@ -137,7 +138,7 @@ const TrainersScreen = () => {
           <h3 className="text-center">Lista de Entrenadores</h3>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <Form.Control className={`bg-obscure custom-border text-white w-35 ${isMobile && 'w-100 me-2'}`} type="text" placeholder="Buscar por Documento/Nombre" onChange={handleSearch} />
-            {user?.id_rol === 1 && <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Agregar entrenador'}</Button>}
+            {user?.id_rol === 2 && <Button variant="success" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} /> {!isMobile && 'Agregar entrenador'}</Button>}
           </div>
           <Table striped bordered hover variant="dark" className='m-0 custom-border' responsive>
             <thead>
@@ -249,11 +250,21 @@ const TrainersScreen = () => {
               required={false}
             />
             
-            <CustomFormInput
+            <CustomFormSelect
               label="Especialidad"
               controlId="especialidad"
               register={register}
               errors={errors.especialidad}
+              options={[
+                { id: 1, name: 'Musculación' },
+                { id: 2, name: 'Crossfit' },
+                { id: 3, name: 'Yoga' },
+                { id: 4, name: 'Pilates' },
+                { id: 5, name: 'Natación' },
+                { id: 6, name: 'Ciclismo' },
+                { id: 12, name: 'Aerobic' },
+                
+              ]}
               option={mode}
               required={false}
             />

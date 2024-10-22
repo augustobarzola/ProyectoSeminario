@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { Row, Col, Form, InputGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
 
 const CustomDateTimePicker = ({
   label,
@@ -18,7 +18,6 @@ const CustomDateTimePicker = ({
   const [selectedDate, setSelectedDate] = useState(null);
   const [manualInput, setManualInput] = useState('');
 
-  // Formatea la fecha en dd/MM/yyyy
   const formatDate = (date) => {
     if (!date) return '';
     const day = String(date.getDate()).padStart(2, '0');
@@ -27,13 +26,11 @@ const CustomDateTimePicker = ({
     return `${day}/${month}/${year}`;
   };
 
-  // Valida si el formato ingresado es dd/MM/yyyy
   const isValidDate = (day, month, year) => {
     const parsedDate = new Date(`${year}-${month}-${day}`);
     return !isNaN(parsedDate.getTime()) && parsedDate.getDate() === parseInt(day);
   };
 
-  // Maneja el cambio desde el calendario
   const handleDateChange = (date) => {
     setSelectedDate(date);
     const formattedDate = date ? formatDate(date) : '';
@@ -41,7 +38,6 @@ const CustomDateTimePicker = ({
     onChange({ target: { name: controlId, value: formattedDate } });
   };
 
-  // Maneja el ingreso manual de la fecha
   const handleManualDateChange = (e) => {
     const value = e.target.value;
     setManualInput(value);
@@ -84,22 +80,21 @@ const CustomDateTimePicker = ({
 
           {/* Ícono de calendario */}
           <InputGroup.Text className="bg-obscure p-2 d-flex justify-content-center custom-border text-white">
-            {/* <DatePicker
+            <DatePicker
               selected={selectedDate}
               onChange={handleDateChange}
               dateFormat="dd/MM/yyyy"
               customInput={<FontAwesomeIcon icon={faCalendarAlt} style={{ cursor: 'pointer' }} />}
               wrapperClassName="d-inline"
               popperPlacement="bottom-end"
-            /> */}
-            <FontAwesomeIcon icon={faCalendarAlt} />
+             />
           </InputGroup.Text>
         </InputGroup>
 
         {/* Mensaje de error */}
         {errors?.message && (
           <div className="invalid-feedback d-block">
-            {errors?.message || "Dato requerido."}
+            {errors.message || "Dato requerido."}
           </div>
         )}
       </Col>

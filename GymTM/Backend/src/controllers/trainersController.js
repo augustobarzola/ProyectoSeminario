@@ -5,15 +5,17 @@ const usersController = require('./usersController');
 module.exports = {
   getAllTrainers: async (req, res) => {
     try {
-      const [entrenadores] = await db.query('SELECT * FROM usuarios u LEFT JOIN personas p ON p.id_usuario = u.id WHERE u.id_rol = 3');
+      const [entrenadores] = await db.query('SELECT *, e.nombre as especialidad FROM usuarios u JOIN personas p ON p.id_usuario = u.id JOIN usuarios_roles ur ON ur.id_usuario=u.id JOIN usuarios_especialidades ue ON ue.id_usuario=u.id JOIN especialidades e ON e.id=ue.id_usuario WHERE ur.id_rol = 4');
       
       // Convertir fechas a formato dd/mm/yyyy antes de devolver
       const entrenadoresFormatted = entrenadores.map(entrenador => ({
         ...entrenador,
+        
         fecha_nacimiento: entrenador.fecha_nacimiento ? convertToDisplayDate(entrenador.fecha_nacimiento) : null,
         fecha_alta: entrenador.fecha_alta ? convertToDisplayDate(entrenador.fecha_alta) : null,
         fecha_baja: entrenador.fecha_baja ? convertToDisplayDate(entrenador.fecha_baja) : null,
       }));
+     
 
       res.json(entrenadoresFormatted);
     } catch (error) {

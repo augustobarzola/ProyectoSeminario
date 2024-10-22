@@ -47,23 +47,24 @@ module.exports = {
     }
   
     const hashedPassword = await bcrypt.hash(password.toString(), 10);
-    
+  
     const connection = await db.getConnection();
     await connection.beginTransaction();
   
     try {
       const [userResult] = await connection.query(
-        'INSERT INTO usuarios (usuario, contrasenia, fecha_alta) VALUES (?, ?, CURDATE())',
+        'INSERT INTO usuarios (usuario, contrasenia, fecha_alta, id_gimnasio) VALUES (?, ?, CURDATE(),1)',
         [usuario, hashedPassword]
       );
       const id_usuario = userResult.insertId;
-  
-      for (const id_rol of id_roles) {
+      
+      //Aca solo recibo un rol
+      
         await connection.query(
           'INSERT INTO usuarios_roles (id_usuario, id_rol) VALUES (?, ?)',
-          [id_usuario, id_rol]
+          [id_usuario, id_roles]
         );
-      }
+      
 
       if (id_especialidades && id_especialidades.length > 0) {
         for (const id_especialidad of id_especialidades) {
@@ -74,12 +75,13 @@ module.exports = {
         }
       }
       
-      if (id_roles.includes(1) || id_roles.includes(2)) {
+      //Voy a eliminar la condicion para los roles 1 o 2, cualquier cosa se puede agregar
+      if(id_roles==1 || id_roles==2)
         await connection.query(
           'INSERT INTO personas (id_usuario, documento, sexo, nombre, apellido, correo, telefono) VALUES (?, ?, ?, ?, ?, ?, ?)',
           [id_usuario, documento, sexo, nombre, apellido, correo, telefono]
         );
-      }
+      
       
       await connection.commit();
       return id_usuario;
@@ -103,7 +105,7 @@ module.exports = {
     } catch (error) {
       console.error('Error al crear el usuario y la persona:', error);
 
-      if (error.message.includes('El documento o usuario ya está registrado.')) {
+      if (error.message.includes('Error')) {
         return res.status(409).json({ success: false, message: 'Error: El documento ya está registrado.' });
       }
 

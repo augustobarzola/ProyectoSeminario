@@ -4,25 +4,27 @@ const { convertToISODate, convertToDisplayDate } = require('../helpers/utils');
 module.exports = {
   getAllPlans: async (req, res) => {
     try {
-      const [planes] = await db.query('SELECT * FROM planes_pago');
+      const [planes] = await db.query('SELECT * FROM planes_pago WHERE id_gimnasio=1');
 
       // Crear un array para almacenar los usuarios con sus datos asociados
       const planesWithMetodosPago = await Promise.all(planes.map(async (plan) => {
         // Obtener datos adicionales 
-        const [planesMetodosPago] = await db.query('SELECT * FROM planes_metodos_pago p JOIN metodos_pago m ON p.id_metodo_pago = m.id WHERE id_plan_pago = ?', [plan.id]);
+        const [planesMetodosPago] = await db.query('SELECT dp.*, m.nombre AS metodo_nombre FROM detalle_planes_pago dp JOIN metodos_pago m ON dp.id_metodo_pago = m.id WHERE dp.id_plan_pago = 2 ;', [plan.id]);
 
         return {
           ...plan, // Datos del plan
           metodos_pago: planesMetodosPago, // Agrega detalles 
         };
       }));
-
+      
       // Convertir fechas a formato dd/mm/yyyy antes de devolver
       const planesFormatted = planesWithMetodosPago.map(plane => ({
         ...plane,
         fecha_alta: convertToDisplayDate(plane.fecha_alta),
         fecha_baja: plane.fecha_baja ? convertToDisplayDate(plane.fecha_baja) : null,
-      }));
+      }))
+      
+      ;
 
       res.json(planesFormatted);
     } catch (error) {
@@ -43,7 +45,7 @@ module.exports = {
   
       // Obtener los métodos de pago asociados al plan
       const [planesMetodosPago] = await db.query(
-        'SELECT pm.*, m.nombre AS metodo_nombre FROM planes_metodos_pago pm JOIN metodos_pago m ON pm.id_metodo_pago = m.id WHERE id_plan_pago = ?',
+        'SELECT dp.*, m.nombre AS metodo_nombre FROM detalle_planes_pago dp JOIN metodos_pago m ON dp.id_metodo_pago = m.id WHERE id_plan_pago = ?',
         [planId]
       );
   
@@ -57,7 +59,7 @@ module.exports = {
           fecha_alta: convertToDisplayDate(method.fecha_alta), // Si hay fecha de alta en métodos
         })),
       };
-  
+    
       res.json(planFormatted);
     } catch (error) {
       console.error(error); // Para depurar el error

@@ -27,6 +27,7 @@ module.exports = {
         fecha_creacion: convertToDisplayDate(rutina.fecha_creacion),
       }));
   
+      console.log(rutinasFormatted);
       res.json(rutinasFormatted);
     } catch (error) {
       res.status(500).json({ error: 'Error al obtener las rutinas.' });

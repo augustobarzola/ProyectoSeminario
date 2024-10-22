@@ -36,6 +36,10 @@ app.use(errorMiddleware);
 
 // Puerto de escucha
 const PORT = process.env.APP_PORT || 3000;
+
+
+
+
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
